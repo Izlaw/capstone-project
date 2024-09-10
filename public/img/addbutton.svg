@@ -1,0 +1,17 @@
+<svg width="124" height="124" viewBox="0 0 124 124" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M62 121C94.5848 121 121 94.5848 121 62C121 29.4152 94.5848 3 62 3C29.4152 3 3 29.4152 3 62C3 94.5848 29.4152 121 62 121Z" stroke="black" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<mask id="path-2-outside-1_9_662" maskUnits="userSpaceOnUse" x="32" y="56" width="60" height="12" fill="black">
+<rect fill="white" x="32" y="56" width="60" height="12"/>
+<path d="M38 62H86.0001Z"/>
+</mask>
+<path d="M38 56C34.6863 56 32 58.6863 32 62C32 65.3137 34.6863 68 38 68V56ZM86.0001 68C89.3138 68 92.0001 65.3137 92.0001 62C92.0001 58.6863 89.3138 56 86.0001 56V68ZM38 68H86.0001V56H38V68Z" fill="black" mask="url(#path-2-outside-1_9_662)"/>
+<mask id="path-4-outside-2_9_662" maskUnits="userSpaceOnUse" x="56" y="32" width="12" height="60" fill="black">
+<rect fill="white" x="56" y="32" width="12" height="60"/>
+<path d="M62 38V86Z"/>
+</mask>
+<path d="M68 38C68 34.6863 65.3137 32 62 32C58.6863 32 56 34.6863 56 38H68ZM56 86C56 89.3138 58.6863 92 62 92C65.3137 92 68 89.3138 68 86H56ZM56 38V86H68V38H56Z" fill="black" mask="url(#path-4-outside-2_9_662)"/>
+<path d="M113.5 62C113.5 90.4427 90.4427 113.5 62 113.5C33.5573 113.5 10.5 90.4427 10.5 62C10.5 33.5573 33.5573 10.5 62 10.5C90.4427 10.5 113.5 33.5573 113.5 62Z" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M62 118C92.9279 118 118 92.9279 118 62C118 31.0721 92.9279 6 62 6C31.0721 6 6 31.0721 6 62C6 92.9279 31.0721 118 62 118Z" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M38 62H86.0001" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M62 38V86" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
