@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
+
 class RegisteredUserController extends Controller
 {
     /**
@@ -30,16 +31,20 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse {
 
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-        'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        'role' => ['required', 'string', 'in:admin,customer,employee'],
-        'sex' => ['required', 'string', 'in:male,female,other'],
-        'bday' => ['required', 'date'],
-        'contact' => ['required', 'integer', 'between:1,11'],
-        'address' => ['required', 'string', 'max:255'],
-    ]);
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'string', 'in:admin,customer,employee'],
+            'sex' => ['required', 'string', 'in:male,female,other'],
+            'bday' => ['required', 'date'],
+            'contact' => ['required', 'integer', 'between:1,11'],
+            'address' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($request->hasErrors()) {
+    dd($request->errors()); // or use a logger to log the errors
+}
 
     $user = new User();
     $user->name = $request->name;
