@@ -8,7 +8,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UploadOrderMaleController;
 use App\Http\Controllers\CustomerSupportController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\Login1Controller;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UploadOrderFemaleController;
@@ -41,9 +40,6 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
-
-Route::get('/login1', [Login1Controller::class, 'index'])->name('login1');
-
 
 Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
 
