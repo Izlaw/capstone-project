@@ -19,7 +19,6 @@ class User extends Model
         'bday',
         'contact',
         'address',
-        'username',
     ];
 
     protected $hidden = [
@@ -30,10 +29,5 @@ class User extends Model
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
-    }
-
-    public function setUsernameAttribute($value)
-    {
-        $this->attributes['username'] = $value ?: $this->name;
     }
 }

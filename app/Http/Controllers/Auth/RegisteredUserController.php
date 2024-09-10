@@ -28,8 +28,8 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
-{
+    public function store(Request $request): RedirectResponse {
+
     $request->validate([
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
@@ -37,20 +37,21 @@ class RegisteredUserController extends Controller
         'role' => ['required', 'string', 'in:admin,customer,employee'],
         'sex' => ['required', 'string', 'in:male,female,other'],
         'bday' => ['required', 'date'],
-        'contact' => ['required', 'string', 'max:20'],
+        'contact' => ['required', 'integer', 'between:1,11'],
         'address' => ['required', 'string', 'max:255'],
     ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'role' => $request->role,
-        'sex' => $request->sex,
-        'bday' => $request->bday,
-        'contact' => $request->contact,
-        'address' => $request->address
-    ]);
+    $user = new User();
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->password = Hash::make($request->password);
+    $user->role = $request->role;
+    $user->sex = $request->sex;
+    $user->bday = $request->bday;
+    $user->contact = $request->contact;
+    $user->address = $request->address;
+
+    $user->save();
 
     event(new Registered($user));
 

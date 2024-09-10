@@ -76,7 +76,6 @@ return new class extends Migration
             $table->date('bday');
             $table->integer('contact');
             $table->string('address');
-            $table->string('username')->unique();
         });
     }
 
