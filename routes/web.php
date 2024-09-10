@@ -10,6 +10,8 @@ use App\Http\Controllers\CustomerSupportController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UploadOrderFemaleController;
+use App\Http\Controllers\ChatSupportController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -51,3 +53,6 @@ Route::get('/uploadordermale', [UploadOrderMaleController::class, 'index'])->nam
 Route::get('/uploadorderfemale', [UploadOrderFemaleController::class, 'index'])->name('uploadorderfemale');
 
 Route::get('/customersupport', [CustomerSupportController::class, 'index'])->name('customersupport');
+
+Route::get('/chatsupport', [ChatSupportController::class, 'index'])->name('chatsupport');
+
