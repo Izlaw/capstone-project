@@ -10,7 +10,7 @@ class LoginController extends Controller
 {
     public function index()
     {
-        return view('login');
+        return view('auth.login');
     }
 
     public function login(Request $request)
@@ -19,7 +19,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             // Login successful, redirect to dashboard or whatever
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended(route('home'));
         } else {
             // Login failed, redirect back with error message
             return redirect()->back()->withErrors(['username' => 'Invalid credentials']);

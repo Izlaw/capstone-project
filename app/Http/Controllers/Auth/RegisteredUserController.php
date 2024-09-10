@@ -29,8 +29,10 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse {
 
+    public function store(Request $request): RedirectResponse {
+    // dd($request->all()); 
+    try {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
@@ -38,14 +40,13 @@ class RegisteredUserController extends Controller
             'role' => ['required', 'string', 'in:admin,customer,employee'],
             'sex' => ['required', 'string', 'in:male,female,other'],
             'bday' => ['required', 'date'],
-            'contact' => ['required', 'integer', 'between:1,11'],
+            'contact' => ['required','string', 'max:11'],
             'address' => ['required', 'string', 'max:255'],
         ]);
-
-        if ($request->hasErrors()) {
-    dd($request->errors()); // or use a logger to log the errors
-}
-
+        } catch (ValidationException $e) {
+        return redirect()->back()->withErrors($e->validator)->withInput();
+    }
+    
     $user = new User();
     $user->name = $request->name;
     $user->email = $request->email;
@@ -57,11 +58,10 @@ class RegisteredUserController extends Controller
     $user->address = $request->address;
 
     $user->save();
-
+    
     event(new Registered($user));
-
     Auth::login($user);
-
-    return redirect(RouteServiceProvider::HOME);
+    return redirect()->route('login');
+    
 }
 }

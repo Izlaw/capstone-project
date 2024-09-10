@@ -74,7 +74,7 @@ return new class extends Migration
             })->change();
             $table->string('sex')->check(DB::raw('sex in ("Male", "Female")'));
             $table->date('bday');
-            $table->integer('contact');
+            $table->string('contact');
             $table->string('address');
         });
     }

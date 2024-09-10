@@ -9,7 +9,7 @@ use App\Http\Controllers\UploadOrderMaleController;
 use App\Http\Controllers\CustomerSupportController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\RegisteredUserController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UploadOrderFemaleController;
 
 /*
