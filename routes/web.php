@@ -11,6 +11,9 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UploadOrderFemaleController;
+use App\Http\Controllers\ExampleController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +58,7 @@ Route::get('/customersupport', [CustomerSupportController::class, 'index'])->nam
 
 Route::get('/chatsupport', [ChatSupportController::class, 'index'])->name('chatsupport');
 
+Route::get('/example', [ExampleController::class, 'index'])->name('example');
 
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);

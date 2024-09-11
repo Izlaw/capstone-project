@@ -13,7 +13,7 @@
 </html>
 <x-guest-layout>
     <!-- Center container -->
-    <div class="flex h-screen justify-center items-center bg-white bg-cover bg-center">
+    <div class="flex h-screen justify-center items-center bg-cover bg-center">
         <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
