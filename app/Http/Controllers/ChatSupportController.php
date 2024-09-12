@@ -9,6 +9,6 @@ class ChatSupportController extends Controller
 {
     public function index()
     {
-        return view('chatsupport');
+        return view('customerui.chatsupport');
     }
 }

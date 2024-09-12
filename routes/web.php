@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 // Syntax sng paghimo sng route
-// Route::get('/web url name', [ControllerNameController::class, 'index'])->name('file path to the webpage');
+// Route::get('/web url name', [ControllerNameController::class, 'index'])->name('path to the file');
 
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
