@@ -18,7 +18,7 @@
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
         <!-- Login Form -->
-        <form method="POST" action="{{ route('login') }}" class="bg-maroonbgcolor p-6 rounded-lg shadow-lg w-full max-w-md">
+        <form method="POST" action="{{ route('login') }}" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
             @csrf
 
             <!-- Email Address -->
@@ -33,7 +33,7 @@
                 <x-input-label for="password" :value="__('Password')" class="font-semibold"/>
                 <x-text-input id="password" class="block mt-2 w-full border border-gray-300 p-2 rounded-md" type="password" name="password" required autocomplete="current-password" />
                 <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500 text-sm" />
-            </div>
+            </div>  
 
             <!-- Remember Me -->
             <div class="block mt-4">
