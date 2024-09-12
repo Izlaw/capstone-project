@@ -13,9 +13,8 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UploadOrderFemaleController;
 use App\Http\Controllers\ChatSupportController;
 use App\Http\Controllers\CustomerProfileController;
+use App\Http\Controllers\EmployeeAssistController;
 use App\Http\Controllers\ExampleController;
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +28,7 @@ use App\Http\Controllers\ExampleController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('customerui.home');
 });
 
 Route::get('/dashboard', function () {
@@ -44,9 +43,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-// Syntax sng paghimo sng route
-// Route::get('/web url name', [ControllerNameController::class, 'index'])->name('path to the file');
-
+// user routes
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
@@ -54,28 +51,29 @@ Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Route::get('/profiles', [CustomerProfileController::class, 'index'])->name('customerui.profile');
+// customer routes (requires 'customer' role)
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
+    Route::get('/uploadorder', [UploadOrderController::class, 'index'])->name('uploadorder');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/uploadordermale', [UploadOrderMaleController::class, 'index'])->name('uploadordermale');
+    Route::get('/uploadorderfemale', [UploadOrderFemaleController::class, 'index'])->name('uploadorderfemale');
+    Route::get('/customersupport', [CustomerSupportController::class, 'index'])->name('customersupport');
+    Route::get('/chatsupport', [ChatSupportController::class, 'index'])->name('chatsupport');
+});
 
-Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
+// employee routes (requires 'employee' role)
+Route::middleware(['auth', 'role:employee'])->group(function () {
+    Route::get('/employeedashboard', function () {
+        return view('employeeui.empdboard');
+    })->name('employee.dashboard');
 
-Route::get('/uploadorder', [UploadOrderController::class, 'index'])->name('uploadorder');
+    Route::get('/empassist', [EmployeeAssistController::class, 'index'])->name('employeeui.empassist');
+});
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-Route::get('/uploadordermale', [UploadOrderMaleController::class, 'index'])->name('uploadordermale');
-
-Route::get('/uploadorderfemale', [UploadOrderFemaleController::class, 'index'])->name('uploadorderfemale');
-
-Route::get('/customersupport', [CustomerSupportController::class, 'index'])->name('customersupport');
-
-Route::get('/chatsupport', [ChatSupportController::class, 'index'])->name('chatsupport');
-
-Route::get('/example', [ExampleController::class, 'index'])->name('example');
-
-Route::get('/employeedashboard', function () {
-    return view('employeeui.empdboard');
-})->middleware('auth')->name('employee.dashboard');
-
-Route::get('/admindashboard', function () {
-    return view('adminui.admindboard');
-})->middleware('auth')->name('admin.dashboard');
+// admin routes (requires 'admin' role)
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admindashboard', function () {
+        return view('adminui.admindboard');
+    })->name('admin.dashboard');
+});
