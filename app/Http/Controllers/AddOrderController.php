@@ -9,6 +9,6 @@ class AddOrderController extends Controller
 {
     public function index()
     {
-        return view('addorder');
+        return view('customerui.addorder');
     }
 }

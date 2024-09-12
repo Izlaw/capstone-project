@@ -1,4 +1,4 @@
-<header class="bg-maroonbgcolor h-12 flex justify-between items-center">
+<header class="bg-maroonbgcolor h-12 flex justify-between items-center max-w-full">
     <!--7 GUYS HOUSE OF FASHION TEXT-->
     <a href="{{ route('home') }}">
         <div class="flex flex-col justify-center ml-0">

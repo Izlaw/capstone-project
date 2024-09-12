@@ -9,6 +9,6 @@ class UploadOrderController extends Controller
 {
     public function index()
     {
-        return view('uploadorder');
+        return view('customerui.uploadorder');
     }
 }

@@ -43,6 +43,9 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
+
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 
@@ -62,5 +65,10 @@ Route::get('/chatsupport', [ChatSupportController::class, 'index'])->name('chats
 
 Route::get('/example', [ExampleController::class, 'index'])->name('example');
 
-Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-Route::post('/register', [RegisteredUserController::class, 'store']);
+Route::get('/employeedashboard', function () {
+    return view('employeeui.empdboard');
+})->middleware('auth')->name('employee.dashboard');
+
+Route::get('/admindashboard', function () {
+    return view('adminui.admindboard'); // Path to your admin dashboard view
+})->middleware('auth')->name('admin.dashboard');
