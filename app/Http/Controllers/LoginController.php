@@ -21,14 +21,14 @@ class LoginController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        // Attempt to log the user in
+        // attempt to log the user in
         if (Auth::attempt($credentials)) {
-            $user = Auth::user(); // Get the logged-in user
+            $user = Auth::user(); 
 
-            // Check if the user is an Admin or Employee and redirect accordingly
-            if ($user->role === 'Admin') {
+            // check if user is an Admin or Employee and redirect accordingly
+            if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard'); // Redirect to admin dashboard
-            } elseif ($user->role === 'Employee') {
+            } elseif ($user->role === 'employee') {
                 return redirect()->route('employee.dashboard'); // Redirect to employee dashboard
             } else {
                 return redirect()->intended(route('home')); // Redirect to home or other default page
@@ -54,13 +54,9 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        // Log out the user
         Auth::logout();
 
-        // Invalidate the session
         $request->session()->invalidate();
-
-        // Regenerate the CSRF token
         $request->session()->regenerateToken();
 
         // Redirect to the login page
