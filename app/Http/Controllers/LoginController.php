@@ -39,4 +39,31 @@ class LoginController extends Controller
                 ->withInput();
         }
     }
+
+    public function edit(Request $request): View {
+        return view('profile.edit', [
+            'user' => $request->user(),  // Pass the authenticated user to the view
+        ]);
+    }
+
+    /**
+     * Handle the logout request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout(Request $request)
+    {
+        // Log out the user
+        Auth::logout();
+
+        // Invalidate the session
+        $request->session()->invalidate();
+
+        // Regenerate the CSRF token
+        $request->session()->regenerateToken();
+
+        // Redirect to the login page
+        return redirect('/login');
+    }
 }

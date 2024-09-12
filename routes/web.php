@@ -12,6 +12,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UploadOrderFemaleController;
 use App\Http\Controllers\ChatSupportController;
+use App\Http\Controllers\CustomerProfileController;
 use App\Http\Controllers\ExampleController;
 
 
@@ -43,11 +44,17 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+// Syntax sng paghimo sng route
+// Route::get('/web url name', [ControllerNameController::class, 'index'])->name('file path to the webpage');
+
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Route::get('/profiles', [CustomerProfileController::class, 'index'])->name('customerui.profile');
 
 Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
 
@@ -70,5 +77,5 @@ Route::get('/employeedashboard', function () {
 })->middleware('auth')->name('employee.dashboard');
 
 Route::get('/admindashboard', function () {
-    return view('adminui.admindboard'); // Path to your admin dashboard view
+    return view('adminui.admindboard');
 })->middleware('auth')->name('admin.dashboard');
