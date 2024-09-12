@@ -8,8 +8,6 @@
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
     @include('layouts.customerheader')
-    <link href="../output.css" rel="stylesheet">
-    @include('layouts.header')
 </head>
 <body class="bg-mainbackground bg-cover overflow-y-hidden">
     <div class="Box h-screen w-70percent bg-maroonbgcolor block mx-auto">
