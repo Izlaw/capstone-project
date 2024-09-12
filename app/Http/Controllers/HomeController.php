@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('customerui.home');
+        if (auth()->user()->role == 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif (auth()->user()->role == 'employee') {
+            return redirect()->route('employee.dashboard');
+        } else {
+            return redirect()->route('home');
+        }
     }
 }

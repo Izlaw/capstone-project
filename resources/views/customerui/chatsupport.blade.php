@@ -7,13 +7,13 @@
     <title>Chat Support</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.header')
+    @include('layouts.customerheader')
 </head>
 <body class="bg-mainbackground bg-cover overflow-y-hidden">
-    <div class="Box h-93-7vh w-70percent bg-maroonbgcolor block mx-auto">
-        <div class="Header h-12 w-full bg-brownbgcolor">
+    <div class="Box h-screen w-70percent bg-maroonbgcolor block mx-auto">
+        <div class="Header w-full bg-brownbgcolor">
             
-    </div>
+        </div>
         test
     </div>
 

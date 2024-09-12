@@ -10,7 +10,7 @@
     @include('layouts.empheader')
 </head>
 <body class="bg-mainbackground bg-cover">
-    AAAAAAAAAAA
+
     
 </body>
 </html>
