@@ -13,16 +13,15 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
-    {
-        $credentials = $request->only(['username', 'password']);
+    public function login(Request $request) {
+    $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            // Login successful, redirect to dashboard or whatever
             return redirect()->intended(route('home'));
         } else {
-            // Login failed, redirect back with error message
-            return redirect()->back()->withErrors(['username' => 'Invalid credentials']);
+            return redirect()->back()
+                ->withErrors(['login' => 'Invalid email or password.'])
+                ->withInput();
         }
     }
 }

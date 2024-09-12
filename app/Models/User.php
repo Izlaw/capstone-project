@@ -11,8 +11,7 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $primaryKey = 'user_id';
-    public $incrementing = true; // Set to false if your primary key is not auto-incrementing
-    protected $keyType = 'int'; // Change if your primary key is not an integer
+    public $incrementing = true; 
 
     public $timestamps = false;
     protected $table = 'users';

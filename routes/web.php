@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 
 Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
 
