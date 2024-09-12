@@ -9,6 +9,6 @@ class CustomerSupportController extends Controller
 {
     public function index()
     {
-        return view('customersupport');
+        return view('customerui.customersupport');
     }
 }

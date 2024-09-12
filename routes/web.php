@@ -11,6 +11,11 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UploadOrderFemaleController;
+use App\Http\Controllers\ChatSupportController;
+use App\Http\Controllers\CustomerProfileController;
+use App\Http\Controllers\ExampleController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +44,17 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+// Syntax sng paghimo sng route
+// Route::get('/web url name', [ControllerNameController::class, 'index'])->name('file path to the webpage');
+
+Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
+
 Route::get('/login', [LoginController::class, 'index'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Route::get('/profiles', [CustomerProfileController::class, 'index'])->name('customerui.profile');
 
 Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
 
@@ -55,6 +70,12 @@ Route::get('/customersupport', [CustomerSupportController::class, 'index'])->nam
 
 Route::get('/chatsupport', [ChatSupportController::class, 'index'])->name('chatsupport');
 
+Route::get('/example', [ExampleController::class, 'index'])->name('example');
 
-Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-Route::post('/register', [RegisteredUserController::class, 'store']);
+Route::get('/employeedashboard', function () {
+    return view('employeeui.empdboard');
+})->middleware('auth')->name('employee.dashboard');
+
+Route::get('/admindashboard', function () {
+    return view('adminui.admindboard');
+})->middleware('auth')->name('admin.dashboard');
