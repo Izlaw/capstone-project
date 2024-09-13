@@ -12,6 +12,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UploadOrderFemaleController;
 use App\Http\Controllers\ChatSupportController;
+use App\Http\Controllers\vieworderpageController;
 use App\Http\Controllers\ExampleController;
 
 
@@ -62,6 +63,8 @@ Route::get('/uploadorderfemale', [UploadOrderFemaleController::class, 'index'])-
 Route::get('/customersupport', [CustomerSupportController::class, 'index'])->name('customersupport');
 
 Route::get('/chatsupport', [ChatSupportController::class, 'index'])->name('chatsupport');
+
+Route::get('/vieworderpage', [vieworderpageController::class, 'index'])->name('vieworderpage');
 
 Route::get('/example', [ExampleController::class, 'index'])->name('example');
 
