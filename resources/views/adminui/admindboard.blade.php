@@ -7,7 +7,7 @@
     <title>Admin Dashboard</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.header')
+    @include('layouts.customerheader')
 </head>
 <body class="bg-mainbackground bg-cover">
 

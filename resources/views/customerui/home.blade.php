@@ -23,7 +23,7 @@
             </div>
         <!--ViewOrder-->
         <div class="ViewOrderColumn w-1/2 bg-white p-2 relative group">
-            <a href="vieworderpage.html">
+            <a href="vieworderpage">
                 <img class="ViewOrderPng h-full w-full grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-150 ease-in-out group-hover:border-8 group-hover:border-white" src="../img/vieworder.png">
                 <div class="ViewOrderContainer absolute inset-0 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center opacity-0 group-hover:opacity-100 transition duration-150 ease-in-out">
                     <img class="ViewOrderButtonPng mx-auto h-32 w-32 grayscale-0 hover:grayscale-0 transition duration-150 ease-in-out" src="../img/viewbutton.svg">
