@@ -11,7 +11,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UploadOrderFemaleController;
-use App\Http\Controllers\vieworderpageController;
+use App\Http\Controllers\ViewOrderController;
 use App\Http\Controllers\ChatSupportController;
 use App\Http\Controllers\EmployeeAssistController;
 
@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
 // Routes that require the 'customer' role
 Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/customersupport', [CustomerSupportController::class, 'index'])->name('customersupport');
+    Route::get('/vieworder', [ViewOrderController::class, 'index'])->name('vieworder');
 });
 
 // Employee routes

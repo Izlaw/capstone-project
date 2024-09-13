@@ -7,13 +7,13 @@
     <title> View Order </title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.header')
+    @include('layouts.customerheader')
 </head>
 <body class="bg-mainbackground bg-cover">
 
         <div class="vieworderpgeContainer mx-auto bg-brownbgcolor w-3/4 bg-opacity-80  " style="height: calc(100vh - 48px);">
             <div class= " viewtable w-full absolute " style="top: 50%; transform: translateY(-50%); text-align: center; display: flex; justify-content: center; " >
-            <table class="mx-auto" style="background-color: white; border: 5px solid #660000; border-collapse: collapse;">
+            <table class="mx-auto bg-white rounded" style="background-color: white;">
     <thead>
         <tr>
             <th style="border: 1px solid #ccc; padding: 12px;">ORDER ID </th>
