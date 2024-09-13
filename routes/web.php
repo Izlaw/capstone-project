@@ -27,9 +27,7 @@ use App\Http\Controllers\ExampleController;
 |
 */
 
-Route::get('/', function () {
-    return view('customerui.home');
-});
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');

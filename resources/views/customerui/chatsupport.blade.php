@@ -7,16 +7,13 @@
     <title>Chat Support</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.customerheader')
-    <link href="../output.css" rel="stylesheet">
-    @include('layouts.header')
+    @include('layouts.empheader')
 </head>
-<body class="bg-mainbackground bg-cover overflow-y-hidden">
-    <div class="Box h-screen w-70percent bg-maroonbgcolor block mx-auto">
-        <div class="Header w-full bg-brownbgcolor">
-            
-        </div>
-        test
+
+<body class="bg-mainbackground bg-cover">
+    <!-- Keep the existing header -->
+    <div class="Header h-12 w-full bg-brownbgcolor">
+        <!-- Header content remains unchanged -->
     </div>
 
     <!-- Center the chat system part -->
