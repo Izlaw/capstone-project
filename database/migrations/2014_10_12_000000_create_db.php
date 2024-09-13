@@ -69,7 +69,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['Admin', 'Customer', 'Employee'])->default('Customer');
+            $table->enum('role', ['admin', 'customer', 'employee'])->default('Customer');
             $table->string('sex')->check(DB::raw('sex in ("Male", "Female")'));
             $table->date('bday');
             $table->string('contact');

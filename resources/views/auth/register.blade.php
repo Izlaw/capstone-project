@@ -1,6 +1,6 @@
 @vite('resources/css/app.css')
 @vite('resources/js/app.js')
-@include('layouts.header')
+@include('layouts.customerheader')
 <body class="bg-mainbackground bg-cover overflow-y-hidden">
 
 <x-guest-layout>

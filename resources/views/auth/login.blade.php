@@ -7,13 +7,13 @@
     <title>Login Page</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.header')
+    @include('layouts.customerheader')
 </head> 
 <body class="bg-mainbackground bg-cover overflow-y-hidden">
 </html>
 <x-guest-layout>
     <!-- Center container -->
-    <div class="LoginContainer flex h-screen justify-center items-center bg-mainbackground bg-cover bg-center">
+    <div class="LoginContainersss flex h-screen justify-center items-center bg-mainbackground bg-cover bg-center">
         <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -34,15 +34,6 @@
                 <x-text-input id="password" class="block mt-2 w-full border border-gray-300 p-2 rounded-md" type="password" name="password" required autocomplete="current-password" />
                 <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500 text-sm" />
             </div>
-
-                    <!-- Display error message if any -->
-        @if ($errors->any())
-                <div class="text-white my-3">
-                    @foreach ($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
-                </div>
-            @endif
 
             <!-- Remember Me -->
             <div class="RememberMeContainer block mt-4">

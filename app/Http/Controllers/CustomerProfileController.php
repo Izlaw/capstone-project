@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class ExampleController extends Controller
+class CustomerProfileController extends Controller
 {
     public function index()
     {
-        return view('example');
+        return view('customerui.profile');
     }
 }

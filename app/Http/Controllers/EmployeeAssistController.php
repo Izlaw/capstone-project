@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class ChatSupportController extends Controller
+class EmployeeAssistController extends Controller
 {
     public function index()
     {
-        return view('customerui.chatsupport');
+        return view('employeeui.empassist');
     }
 }

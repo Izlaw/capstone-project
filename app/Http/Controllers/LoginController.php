@@ -21,14 +21,14 @@ class LoginController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        // Attempt to log the user in
+        // attempt to log the user in
         if (Auth::attempt($credentials)) {
-            $user = Auth::user(); // Get the logged-in user
+            $user = Auth::user(); 
 
-            // Check if the user is an Admin or Employee and redirect accordingly
-            if ($user->role === 'Admin') {
+            // check if user is an Admin or Employee and redirect accordingly
+            if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard'); // Redirect to admin dashboard
-            } elseif ($user->role === 'Employee') {
+            } elseif ($user->role === 'employee') {
                 return redirect()->route('employee.dashboard'); // Redirect to employee dashboard
             } else {
                 return redirect()->intended(route('home')); // Redirect to home or other default page
@@ -38,5 +38,28 @@ class LoginController extends Controller
                 ->withErrors(['login' => 'Invalid email or password.'])
                 ->withInput();
         }
+    }
+
+    public function edit(Request $request): View {
+        return view('profile.edit', [
+            'user' => $request->user(),  // Pass the authenticated user to the view
+        ]);
+    }
+
+    /**
+     * Handle the logout request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Redirect to the login page
+        return redirect('/login');
     }
 }
