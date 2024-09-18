@@ -1,5 +1,8 @@
 @vite('resources/js/app.js')
+
 <header class="bg-maroonbgcolor h-12 flex justify-between items-center max-w-full">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!--7 GUYS HOUSE OF FASHION TEXT-->
     <a href="{{ route('home') }}">
         <div class="flex flex-col justify-center ml-0">
@@ -10,7 +13,7 @@
     <!--Search Bar-->
     <div class="search-container w-full max-w-md p-4 mx-auto">
         <div class="relative">
-            <input class="searchInput rounded-full bg-brownbgcolor w-full h-8 pl-4 text-lg type=text text-white focus:outline-none focus:ring-0" placeholder="Search...">
+            <input class="searchInput rounded-full bg-brownbgcolor w-full h-8 pl-4 text-lg text-white focus:outline-none focus:ring-0" type="text" placeholder="Search...">
             <img class="searchIcon absolute top-1 right-2 w-6 h-6" src="{{ asset('img/search.svg') }}" alt="Search icon">
         </div>
     </div>

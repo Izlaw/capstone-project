@@ -1,19 +1,30 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\User; 
+
+// essential controllers
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ChatController;
+
+// customer routes 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AddOrderController;
 use App\Http\Controllers\UploadOrderController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UploadOrderMaleController;
 use App\Http\Controllers\CustomerSupportController;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UploadOrderFemaleController;
 use App\Http\Controllers\ViewOrderController;
-use App\Http\Controllers\ChatSupportController;
-use App\Http\Controllers\EmployeeAssistController;
+
+// employee controllers
+use App\Http\Controllers\ManageOrderController;
+use App\Http\Controllers\AssistCustomerController;
+
+// admin controllers
+
 
 /*
 |---------------------------------------------------------------------------
@@ -45,7 +56,6 @@ Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
 Route::get('/uploadorder', [UploadOrderController::class, 'index'])->name('uploadorder');
 Route::get('/uploadordermale', [UploadOrderMaleController::class, 'index'])->name('uploadordermale');
 Route::get('/uploadorderfemale', [UploadOrderFemaleController::class, 'index'])->name('uploadorderfemale');
-Route::get('/chatsupport', [ChatSupportController::class, 'index'])->name('chatsupport');
 
 // Routes that require authentication
 Route::middleware('auth')->group(function () {
@@ -65,7 +75,9 @@ Route::middleware(['auth', 'role:employee'])->group(function () {
     Route::get('/employeedashboard', function () {
         return view('employeeui.empdboard');
     })->name('employee.dashboard');
-    Route::get('/empassist', [EmployeeAssistController::class, 'index'])->name('employeeui.empassist');
+    Route::get('/manageorder', [ManageOrderController::class, 'index'])->name('employeeui.manageorder');
+    Route::get('/assistcustomer', [AssistCustomerController::class, 'index'])->name('employeeui.assistcustomer');
+
 });
 
 // Admin routes
@@ -79,3 +91,38 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::get('/access-denied', function () {
     return view('access-denied');
 })->name('access-denied');
+
+
+// Main Chat Route - Redirects to a random employee if no recipient is provided
+Route::get('/chat', function () {
+    $user = Auth::user();
+
+    if ($user->role == 'customer') {
+        $employees = User::where('role', 'employee')->get();
+        if ($employees->isEmpty()) {
+            abort(404, 'No employees found');
+        }
+        $randomEmployee = $employees->random();
+        return redirect()->route('chat.recipient', ['recipient' => $randomEmployee->user_id]);
+    }
+
+    $customers = User::whereHas('messages', function ($query) use ($user) {
+        $query->where('user_id', $user->user_id);
+    })->get();
+
+    return view('employeeui.assistcustomer', ['conversations' => $customers]);
+})->middleware('auth')->name('chat');
+
+// Route for specific recipient conversation
+Route::get('/chat/{recipient}', function ($recipient) {
+    $recipientUser = User::find($recipient);
+    if (!$recipientUser) {
+        abort(404, 'Recipient not found');
+    }
+    return view('chat', ['recipient' => $recipientUser]);
+})->middleware('auth')->name('chat.recipient');
+
+
+// Send Message Route
+Route::post('/send-message', [ChatController::class, 'sendMessage'])->middleware('auth');
+

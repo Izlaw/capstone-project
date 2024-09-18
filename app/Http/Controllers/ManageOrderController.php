@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class AdminController extends Controller
+class ManageOrderController extends Controller
 {
     public function index()
     {
-        return view('adminui.admindboard'); // Employee dashboard view
+        return view('employeeui.manageorder'); 
     }
 }

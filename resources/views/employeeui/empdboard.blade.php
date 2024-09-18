@@ -9,7 +9,7 @@
     @include('layouts.empheader')
 </head>
 <body class="bg-mainbackground bg-cover">
-    AAAAAAAAAAA
+    <button type="submit" class="AssistCustomer text-white bg-maroonbgcolor p-2 rounded"  onclick="window.location.href='{{ route('employeeui.assistcustomer') }}'">Assist Customer</button>
     
 </body>
 </html>

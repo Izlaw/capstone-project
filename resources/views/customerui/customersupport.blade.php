@@ -48,14 +48,23 @@
             <div class="HiddenAnswer max-h-0 opacity-0 overflow-hidden transition-all duration-150 ease-in-out">This is the answer to the FAQ above.</div>
         </div>
 
-        <!-- Redirect user to chat support page -->
+        @php
+            // Fetch a random employee
+            $randomEmployee = App\Models\User::where('role', 'employee')->inRandomOrder()->first();
+        @endphp
 
-        <a href="chatsupportpage.html" class="relative group w-32 block mt-14">
-            <div class="MoreInfoContainer ml-2">
-                <p class="MoreInfo w-36 text-center font-semibold opacity-100 group-hover:opacity-0 transition-opacity duration-300 text-white bg-maroonbgcolor rounded p-2 absolute top-1/2 transform -translate-y-1/2">Still need help?</p>
-                <p class="MoreInfo w-36 text-center font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-maroonbgcolor bg-white rounded p-2 absolute top-1/2 transform -translate-y-1/2">Contact us!</p>
-            </div>
-        </a>
+        @if ($randomEmployee)
+            <a href="{{ route('chat', ['recipient' => $randomEmployee->user_id]) }}" class="relative group w-32 block mt-14">
+                <div class="MoreInfoContainer ml-2">
+                    <p class="MoreInfo w-36 text-center font-semibold opacity-100 group-hover:opacity-0 transition-opacity duration-300 text-white bg-maroonbgcolor rounded p-2 absolute top-1/2 transform -translate-y-1/2">Still need help?</p>
+                    <p class="MoreInfo w-36 text-center font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-maroonbgcolor bg-white rounded p-2 absolute top-1/2 transform -translate-y-1/2">Contact us!</p>
+                </div>
+            </a>
+        @else
+            <p>No employees available.</p>
+        @endif
+
+
 
     </div>
 </body>
