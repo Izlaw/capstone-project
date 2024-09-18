@@ -31,5 +31,10 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-    
+
+    public function isEmployee()
+    {
+        return $this->role === 'employee'; // Adjust according to your role setup
+    }
 }
+

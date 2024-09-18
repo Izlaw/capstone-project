@@ -11,7 +11,6 @@
 </head> 
 <body class="bg-mainbackground bg-cover overflow-y-hidden">
 </html>
-<x-guest-layout>
     <!-- Center container -->
     <div class="LoginContainersss flex h-screen justify-center items-center bg-mainbackground bg-cover bg-center">
         <!-- Session Status -->
@@ -35,6 +34,13 @@
                 <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500 text-sm" />
             </div>
 
+            <!-- General Login Error -->
+            @if ($errors->has('login'))
+                <div class="mt-4 text-white text-base">
+                    {{ $errors->first('login') }}
+                </div>
+            @endif
+
             <!-- Remember Me -->
             <div class="RememberMeContainer block mt-4">
                 <label for="remember_me" class="inline-flex items-center">
@@ -57,5 +63,4 @@
             </div>
         </form>
     </div>
-</x-guest-layout>
 <body>

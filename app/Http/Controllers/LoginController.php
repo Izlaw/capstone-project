@@ -4,15 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
-    public function index()
+    /**
+     * Show the login form.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index(): View
     {
         return view ('auth.login');
     }
 
-    public function login(Request $request) {
+    /**
+     * Handle the login request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function login(Request $request)
+    {
         // Validate the input
         $request->validate([
             'email' => 'required|email',
@@ -21,11 +34,11 @@ class LoginController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        // attempt to log the user in
+        // Attempt to log the user in
         if (Auth::attempt($credentials)) {
             $user = Auth::user(); 
 
-            // check if user is an Admin or Employee and redirect accordingly
+            // Check if user is an Admin or Employee and redirect accordingly
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard'); // Redirect to admin dashboard
             } elseif ($user->role === 'employee') {
@@ -34,13 +47,21 @@ class LoginController extends Controller
                 return redirect()->intended(route('home')); // Redirect to home or other default page
             }
         } else {
+            // Redirect back with error message and old input
             return redirect()->back()
                 ->withErrors(['login' => 'Invalid email or password.'])
                 ->withInput();
         }
     }
 
-    public function edit(Request $request): View {
+    /**
+     * Show the profile edit form.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
+    public function edit(Request $request): View
+    {
         return view('profile.edit', [
             'user' => $request->user(),  // Pass the authenticated user to the view
         ]);

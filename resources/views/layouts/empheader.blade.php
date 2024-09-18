@@ -1,5 +1,6 @@
 @vite('resources/js/app.js')
 <header class="bg-maroonbgcolor h-12 flex justify-between items-center max-w-full">
+<meta name="csrf-token" content="{{ csrf_token() }}">
     <!--7 GUYS HOUSE OF FASHION TEXT-->
     <a href="{{ route('home') }}">
         <div class="flex flex-col justify-center ml-0">
@@ -10,7 +11,7 @@
 
     <!--User Info-->
 <div class="userContainer flex items-center space-x-2 mr-2">
-    <a href="{{ route('employeeui.empassist') }}">
+    <a href="">
         <img class="customerSupport h-8 w-8" src="{{ asset('img/customersupport.svg') }}" alt="Customer Support icon">
     </a>
     @auth
