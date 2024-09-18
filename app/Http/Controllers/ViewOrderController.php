@@ -9,6 +9,7 @@ class ViewOrderController extends Controller
 {
     public function index()
     {
-        return view('customerui.vieworder');
+        $ViewOrder = \App\Models\orders::all();
+        return view('customerui.ViewOrder', compact('ViewOrder'));
     }
 }
