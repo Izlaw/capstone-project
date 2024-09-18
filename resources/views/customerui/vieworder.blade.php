@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="../output.css" rel="stylesheet">
     <title> View Order </title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
     @include('layouts.customerheader')
 </head>
-<body class="bg-mainbackground bg-cover">
+<body class="bg-mainbackground bg-cover overflow-y-hidden">
 
         <div class="vieworderpgeContainer mx-auto bg-brownbgcolor w-3/4 bg-opacity-80  " style="height: calc(100vh - 48px);">
             <div class= " viewtable flex justify-center" >

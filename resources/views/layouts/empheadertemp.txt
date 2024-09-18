@@ -8,8 +8,8 @@
     @vite('resources/js/app.js')
     @include('layouts.empheader')
 </head>
-<body class="bg-mainbackground bg-cover">
-    AAAAAAAAAAA
+<body class="bg-mainbackground bg-cover overflow-y-hidden">
+
     
 </body>
 </html>

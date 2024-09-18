@@ -9,27 +9,26 @@
     @vite('resources/js/app.js')
     @include('layouts.customerheader')
 </head>
-<body class="bg-mainbackground bg-cover overflow-y-hidden">
-    <div class="Box h-screen w-70percent bg-maroonbgcolor block mx-auto">
-        <div class="Header w-full bg-brownbgcolor">
-            
-        </div>
-        test
+
+<body class="bg-mainbackground bg-cover">
+    <!-- Keep the existing header -->
+    <div class="Header h-12 w-full bg-brownbgcolor">
+        <!-- Header content remains unchanged -->
     </div>
 
     <!-- Center the chat system part -->
     <div class="flex justify-center items-center min-h-screen bg-brown-800"> <!-- Added background here -->
         <!-- Chat system container with brown background -->
-        <div class="relative z-10 w-full max-w-3xl bg-brown-500 rounded-lg shadow-lg flex flex-col">
+        <div class="ChatContainer relative z-10 w-screen max-w-3xl bg-brown-500 rounded-lg shadow-lg flex flex-col">
             
             <!-- Chat Header (inside chat section, not the page header) -->
             <div class="bg-brown-700 p-4 rounded-t-lg flex justify-between items-center">
-                <h2 class="text-lg font-semibold">Support Chat</h2>
+                <h2 class="text-lg font-semibold text-white bg-maroonbgcolor">Support Chat</h2>
                 <span class="text-sm text-gray-400">Today</span>
             </div>
 
             <!-- Chat Body -->
-            <div class="flex-1 h-[600px] overflow-y-auto p-6 space-y-4 bg-brown-700">
+            <div class="ChatBodyContainer block mx-auto overflow-y-auto p-6 space-y-4 bg-brownbgcolor w-full">
                 
                 <!-- Support (Left-aligned) -->
                 <div class="flex items-start space-x-2">
@@ -74,10 +73,7 @@
                         <img src="../img/josh.jpg" alt="User Avatar" class="w-10 h-10 rounded-full">
                     </div>
                 </div>
-
-            </div>
-
-            <!-- Chat Input -->
+                <!-- Chat Input -->
             <div class="bg-brown-700 p-4 rounded-b-lg flex items-center">
                 <input type="text" class="flex-1 bg-gray-700 p-3 rounded-full text-white focus:outline-none" placeholder="Type a message...">
                 <button class="ml-4 bg-green-500 p-3 rounded-full hover:bg-green-600">
@@ -87,6 +83,10 @@
                 </button>
             </div>
 
+
+            </div>
+
+            
         </div>
     </div>
 </body>

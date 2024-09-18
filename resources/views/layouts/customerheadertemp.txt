@@ -6,10 +6,10 @@
     <title>Webpage Title</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.empheader')
+    @include('layouts.customerheader')
 </head>
-<body class="bg-mainbackground bg-cover">
-    AAAAAAAAAAA
+<body class="bg-mainbackground bg-cover overflow-y-hidden">
+
     
 </body>
 </html>
