@@ -83,7 +83,8 @@ Route::middleware('auth')->group(function () {
 // Routes that require the 'customer' role
 Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/customersupport', [CustomerSupportController::class, 'index'])->name('customersupport');
-    Route::get('/vieworder', [ViewOrderController::class, 'index'])->name('vieworder');
+    Route::get('/ViewOrder', [ViewOrderController::class, 'index'])->name('vieworder');
+    Route::get('/orderDetails', [orderDetailsController::class, 'index'])->name('orderDetails');
     Route::get('/viewcollections', [ViewCollectionsController::class, 'index'])->name('viewcollections');
 });
 
