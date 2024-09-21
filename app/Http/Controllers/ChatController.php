@@ -12,7 +12,8 @@ use App\Models\User; // Import your User model
 class ChatController extends Controller
 {
     public function sendMessage(Request $request)
-    {
+{
+    try {
         $request->validate([
             'message' => 'required|string|max:255',
         ]);
@@ -36,10 +37,17 @@ class ChatController extends Controller
             'status' => 'Message sent successfully!',
             'message' => $messageContent,
             'user' => $user->name,
-            'status' => $message->status,
             'date' => $message->date,
+            'senderId' => $user->user_id,
         ]);
+    } catch (\Exception $e) {
+        // Return a JSON response on error
+        return response()->json([
+            'error' => 'An error occurred.',
+            'message' => $e->getMessage(),
+        ], 500);
     }
+}
 
     public function getMessages($conversationId)
     {
@@ -75,30 +83,6 @@ class ChatController extends Controller
         } else {
             abort(404, 'No employees found');
         }
-    }
-
-    public function showConversations()
-    {
-        $userId = Auth::id(); // Get the current employee's ID
-
-        // Fetch the most recent message for each user
-        $conversations = Message::select('user_id', 'content', 'date')
-            ->where('status', 'active')
-            ->where('user_id', '!=', $userId)
-            ->latest('date') // Order by date to get the latest message
-            ->get()
-            ->groupBy('user_id') // Group by user ID
-            ->map(function ($messages) {
-                return $messages->first(); // Get the most recent message for each user
-            });
-
-        // Load user details for each conversation
-        $conversations = $conversations->map(function ($message) {
-            $message->user = $message->user; // Load the user relationship
-            return $message;
-        });
-
-        return view('employeeui.assistcustomer', compact('conversations'));
     }
 }
 

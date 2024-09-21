@@ -35,10 +35,13 @@
     <div class="userIconDropdown hidden absolute top-2 right-0 mt-10 w-48 bg-white rounded-md shadow-lg py-2 z-1">
         <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
 
-        <form id="logout-form" method="POST" action="{{ route('logout') }}">
-            @csrf
-            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
-        </form>
+        <form id="auth-form" method="POST" action="{{ Auth::check() ? route('logout') : route('login') }}">
+    @csrf
+    <a href="#" onclick="event.preventDefault(); document.getElementById('auth-form').submit();" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+        {{ Auth::check() ? 'Logout' : 'Login' }}
+    </a>
+</form>
+
     </div>
 </div>
 

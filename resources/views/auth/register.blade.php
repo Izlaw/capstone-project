@@ -3,8 +3,9 @@
 @include('layouts.customerheader')
 <body class="bg-mainbackground bg-cover overflow-y-hidden">
 
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}" class="mx-auto bg-brownbgcolor w-2/3 bg-opacity-80 backdrop-blur-md h-screen scroll-smooth snap-start snap-always">
+<div class="RegisterFormContainer flex items-center justify-center h-screen">
+
+    <form method="POST" action="{{ route('register') }}" class="mx-auto bg-maroonbgcolor w-2/3 bg-opacity-80 backdrop-blur-md h-4/5 scroll-smooth snap-start snap-always rounded-md">
 
     <p class="RegisterTxt translate-y-6 text-center text-4xl font-semibold text-white">Register</p>
     <p class="RegisterTxt translate-y-6 text-center text-lg font-medium text-white mb-10">Create an account with 7 GUYS House of Shop.</p>
@@ -20,31 +21,20 @@
 
             <!-- Email Address -->
             <div class="Email Address Container">
-                <x-text-input id="email" class="block w-11/12 mx-auto p-2 font-medium rounded mt-5" type="email" placeholder="Email:" name="email" :value="old('email')" required autocomplete="username" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <x-text-input id="email" class="block w-11/12 mx-auto p-2 font-medium rounded mt-5" type="email" placeholder="Email:" name="email" :value="old('email')" required autocomplete="username" />
             </div>  
 
             <!-- Password -->
             <div class="PasswordContainer">
+                <x-input-error :messages="$errors->get('password')" cjlass="mt-2" />
                 <x-text-input id="password" class="block w-11/12 mx-auto p-2 font-medium rounded mt-5" type="password" placeholder="Password" name="password" required autocomplete="new-password" />
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
             </div>
 
             <!-- Confirm Password -->
             <div class="mt-4">
-                <x-text-input id="password_confirmation" class="block w-11/12 mx-auto p-2 font-medium rounded mt-5" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm Password" />
                 <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-            </div>
-
-            <!-- Role -->
-            <div class="RoleContainer block w-30percent mx-auto p-2 font-medium rounded">
-                <select id="role" class="block mt-5 w-full rounded" name="role" required>
-                    <option value="">Select Role</option>
-                    <option value="admin">Admin</option>
-                    <option value="customer">Customer</option>
-                    <option value="employee">Employee</option>
-                </select>
-                <x-input-error :messages="$errors->get('role')" class="mt-2" />
+                <x-text-input id="password_confirmation" class="block w-11/12 mx-auto p-2 font-medium rounded mt-5" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm Password" />
             </div>
 
             <!-- Sex -->
@@ -76,18 +66,17 @@
                 <x-input-error :messages="$errors->get('address')" class="mt-2" />
             </div>
 
-            <x-primary-button class="mt-6 mx-auto block bg-maroonbgcolor text-white hover:text-maroonbgcolor hover:bg-white py-4">
+            <!-- Register button -->
+            <button class="mt-6 mx-auto block bg-maroonbgcolor p-2 px-4 rounded-lg text-white hover:text-maroonbgcolor hover:bg-white transition duration-300 ease-in-out">
                 {{ __('Register') }}
-            </x-primary-button>
+            </button>
         </div>
 
-        <!-- Register button -->
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-        </div>
+        <!-- Login redirect -->
+        <button type="button" class="LoginRedirectBtn text-white mt-4 px-4 py-2 rounded-md hover:bg-white hover:text-maroonbgcolor transition duration-300 ease-in-out" onclick="window.location.href='{{ route('login') }}'">
+            {{ __('Already registered?') }}
+        <button>
     </form>
-</x-guest-layout>
+</div>
 
 </body>

@@ -49,7 +49,6 @@
         </div>
 
         @php
-            // Fetch a random employee
             $randomEmployee = App\Models\User::where('role', 'employee')->inRandomOrder()->first();
         @endphp
 

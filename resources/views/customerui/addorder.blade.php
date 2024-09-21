@@ -37,7 +37,7 @@
 
             <!-- View Collections Option -->
             <div class="ViewCollectionsColumn w-1/2 bg-white p-2 relative group">
-                <a href="viewcollectionspage.html">
+                <a href="{{ route('viewcollections') }}">
                     <img class="ViewCollectionsSvg h-full w-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition duration-150 ease-in-out group-hover:border-8 group-hover:border-white" src="../img/viewcollections.svg">                    
                     <div class="ViewCollectionsContainer absolute inset-0 0 flex flex-col justify-center items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center opacity-0 group-hover:opacity-100 transition duration-150 ease-in-out">
                         <img class="ViewCollectionsButtonSvg mx-auto h-128 w-128 grayscale-0 hover:grayscale-0 transition duration-150 ease-in-out" src="../img/viewcollectionsbutton.svg">
