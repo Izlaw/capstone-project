@@ -84,8 +84,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/customersupport', [CustomerSupportController::class, 'index'])->name('customersupport');
     Route::get('/ViewOrder', [ViewOrderController::class, 'index'])->name('vieworder');
-    Route::get('/orderDetails', [orderDetailsController::class, 'index'])->name('orderDetails');
     Route::get('/viewcollections', [ViewCollectionsController::class, 'index'])->name('viewcollections');
+    Route::get('/orderDetails', [orderDetailsController::class, 'index'])->name('orderDetails');
 });
 
 // Employee routes
