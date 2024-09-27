@@ -20,6 +20,7 @@ use App\Http\Controllers\UploadOrderFemaleController;
 use App\Http\Controllers\ViewOrderController;
 use App\Http\Controllers\ViewCollectionsController;
 use App\Http\Controllers\CustomizeTShirtController;
+use App\Http\Controllers\orderDetailsController;
 
 // Employee controllers
 use App\Http\Controllers\ManageOrderController;
