@@ -7,15 +7,15 @@
     <title>Upload Order Page</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.customerheader')
+    @include('layouts.header')
 </head>
 
-<body class="bg-mainbackground bg-cover">
+<body class="bg-mainbackground bg-cover overflow-y-hidden">
   
 <!-- Container -->
   <div class="SelectionContainer mx-auto scale-95 bg-brownbgcolor bg-opacity-80 backdrop-blur-md">
     <div class="TopBar bg-maroonbgcolor text-white text-center flex justify-center items-center mt-2 h-12">
-      <h2 class="text-black leading-8 text-3xl font-semibold">Customize</h2>
+      <h2 class="text-white leading-8 text-3xl font-semibold">Customize</h2>
       
       <!-- Back Button -->
       <a href="{{ route('uploadorder')}}" class="GoBackButton absolute top-0.5 right-2 group">

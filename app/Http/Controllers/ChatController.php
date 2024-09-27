@@ -12,42 +12,42 @@ use App\Models\User; // Import your User model
 class ChatController extends Controller
 {
     public function sendMessage(Request $request)
-{
-    try {
-        $request->validate([
-            'message' => 'required|string|max:255',
-        ]);
+    {
+        try {
+            $request->validate([
+                'message' => 'required|string|max:255',
+            ]);
 
-        $messageContent = $request->input('message');
-        $user = Auth::user(); // Get the currently authenticated user
+            $messageContent = $request->input('message');
+            $user = Auth::user(); // Get the currently authenticated user
 
-        // Create a new message instance
-        $message = new Message();
-        $message->content = $messageContent;
-        $message->date = now();
-        $message->status = 'active';
-        $message->user_id = $user->user_id;
-        $message->save();
-        
-        // Broadcast the message event
-        broadcast(new MessageSent($user, $message));
+            // Create a new message instance
+            $message = new Message();
+            $message->content = $messageContent;
+            $message->date = now();
+            $message->status = 'active';
+            $message->user_id = $user->user_id;
+            $message->save();
+            
+            // Broadcast the message event
+            broadcast(new MessageSent($user, $message));
 
-        // Return a JSON response
-        return response()->json([
-            'status' => 'Message sent successfully!',
-            'message' => $messageContent,
-            'user' => $user->name,
-            'date' => $message->date,
-            'senderId' => $user->user_id,
-        ]);
-    } catch (\Exception $e) {
-        // Return a JSON response on error
-        return response()->json([
-            'error' => 'An error occurred.',
-            'message' => $e->getMessage(),
-        ], 500);
+            // Return a JSON response
+            return response()->json([
+                'status' => 'Message sent successfully!',
+                'message' => $messageContent,
+                'user' => $user->name,
+                'date' => $message->date,
+                'senderId' => $user->user_id,
+            ]);
+        } catch (\Exception $e) {
+            // Return a JSON response on error
+            return response()->json([
+                'error' => 'An error occurred.',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
-}
 
     public function getMessages($conversationId)
     {

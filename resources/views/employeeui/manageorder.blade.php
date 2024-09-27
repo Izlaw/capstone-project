@@ -6,7 +6,7 @@
     <title>Webpage Title</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.empheader')
+    @include('layouts.header')
 </head>
 <body class="bg-mainbackground bg-cover overflow-y-hidden">
     <div class=" flex flex-col items-center p-4 bg-brownbgcolor overflow-y-scroll h-65percent">   

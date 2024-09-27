@@ -6,7 +6,7 @@
     <title>Webpage Title</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.empheader')
+    @include('layouts.header')
 </head>
 <body class="bg-mainbackground bg-cover">
     <button type="submit" class="AssistCustomer text-white bg-maroonbgcolor p-2 rounded"  onclick="window.location.href='{{ route('employeeui.assistcustomer') }}'">Assist Customer</button>

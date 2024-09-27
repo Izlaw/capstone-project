@@ -1,6 +1,0 @@
-php artisan cache:clear    # Clear application cache
-php artisan config:clear   # Clear configuration cache
-php artisan route:clear    # Clear route cache
-php artisan view:clear     # Clear compiled view files
-php artisan event:clear    # Clear event cache
-php artisan optimize:clear # Clear all caches (config, route, view, and events)

@@ -6,15 +6,15 @@
     <title>Upload Order Page</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.customerheader')
+    @include('layouts.header')
     
 </head>
-<body class="bg-mainbackground bg-cover">
+<body class="bg-mainbackground bg-cover overflow-y-hidden">
 
 <!-- Container -->
   <div class="SelectionContainer mx-auto scale-95 bg-brownbgcolor bg-opacity-80 backdrop-blur-md">
     <div class="TopBar bg-maroonbgcolor text-white text-center flex justify-center items-center mt-2 h-12">
-      <h2 class="text-black leading-8 text-3xl font-semibold">Customize</h2>
+      <h2 class="text-white leading-8 text-3xl font-semibold">Customize</h2>
       
       <!-- Back Button -->
       <a href="{{ route('uploadorder')}}" class="GoBackButton absolute top-0.5 right-2 group">
@@ -78,7 +78,9 @@
         <!-- Preset options -->
         <div class="TShirtsOptionPngsContainer flex flex-nowrap flex-shrink-0 max-w-1200px">
           <div class="OptionPngs bg-white w-280px h-83vh mr-4">
-            This is a placeholder for TShirts image 1
+            <a href="{{ route('customizetshirt') }}">
+              <img src="/img/black-tshirt.png" alt="T-Shirt Model" class=" h-full object-cover grayscale hover:grayscale-0" />
+            </a>
           </div>
           <div class="OptionPngs bg-white w-280px h-83vh mr-4">
             This is a placeholder for TShirts image 2
@@ -92,7 +94,7 @@
           <div class="OptionPngs bg-white w-280px h-83vh mr-4">
             This is a placeholder for TShirts image 5
           </div>
-        </div>
+        </div>  
       </div>
 
       <div class="CurtainsOptionsOuter flex-1 overflow-x-auto max-w-full">
