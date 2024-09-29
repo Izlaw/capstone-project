@@ -18,14 +18,12 @@ use App\Http\Controllers\AddOrderController;
 use App\Http\Controllers\UploadOrderController;
 use App\Http\Controllers\UploadOrderMaleController;
 use App\Http\Controllers\FAQController;
-use App\Http\Controllers\FAQController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UploadOrderFemaleController;
 use App\Http\Controllers\ViewOrderController;
 use App\Http\Controllers\ViewCollectionsController;
 use App\Http\Controllers\CustomizeTShirtController;
 use App\Http\Controllers\orderDetailsController;
-use App\Http\Controllers\CustomizeTShirtController;
 use App\Http\Controllers\CustomOrderController;
 
 // Employee controllers
