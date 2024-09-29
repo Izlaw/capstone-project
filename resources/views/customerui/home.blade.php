@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.customerheader')
+    @include('layouts.header')
 </head>
-<body class="bg-mainbackground bg-cover">
+<body class="bg-mainbackground bg-cover overflow-y-hidden">
 
     <!--Choices-->
     <div class="choicecontainer mx-auto p-4 flex justify-center scale-95" style="gap: 70px; height: calc(100vh - 48px)">

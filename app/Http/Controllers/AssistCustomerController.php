@@ -48,26 +48,25 @@ class AssistCustomerController extends Controller
     }
 
     public function showChat($recipient)
-{
-    $recipientUser = User::find($recipient);
-    if (!$recipientUser) {
-        abort(404, 'Recipient not found');
+    {
+        $recipientUser = User::find($recipient);
+        if (!$recipientUser) {
+            abort(404, 'Recipient not found');
+        }
+
+        $userId = Auth::id(); // Get the current authenticated user's ID
+
+        // Fetch messages between the authenticated user and the recipient
+        $messages = Message::where(function ($query) use ($recipient, $userId) {
+            $query->where('user_id', $userId)
+                ->where('conversation_id', $recipient); // Adjust if conversation_id is the recipient ID
+        })->orWhere(function ($query) use ($recipient, $userId) {
+            $query->where('user_id', $recipient)
+                ->where('conversation_id', $userId); // Adjust if conversation_id is the recipient ID
+        })->with('user') // Load the user relationship
+        ->get();
+
+        return view('chat', ['recipient' => $recipientUser, 'messages' => $messages]);
     }
-
-    $userId = Auth::id(); // Get the current authenticated user's ID
-
-    // Fetch messages between the authenticated user and the recipient
-    $messages = Message::where(function ($query) use ($recipient, $userId) {
-        $query->where('user_id', $userId)
-              ->where('conversation_id', $recipient); // Adjust if conversation_id is the recipient ID
-    })->orWhere(function ($query) use ($recipient, $userId) {
-        $query->where('user_id', $recipient)
-              ->where('conversation_id', $userId); // Adjust if conversation_id is the recipient ID
-    })->with('user') // Load the user relationship
-    ->get();
-
-    return view('chat', ['recipient' => $recipientUser, 'messages' => $messages]);
-}
-
 }
 

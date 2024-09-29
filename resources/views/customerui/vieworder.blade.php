@@ -7,7 +7,7 @@
     <title> View Order </title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.customerheader')
+    @include('layouts.header')
 </head>
 
 <body class="bg-mainbackground bg-cover">  

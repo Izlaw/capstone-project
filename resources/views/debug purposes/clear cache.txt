@@ -4,3 +4,12 @@ php artisan route:clear    # Clear route cache
 php artisan view:clear     # Clear compiled view files
 php artisan event:clear    # Clear event cache
 php artisan optimize:clear # Clear all caches (config, route, view, and events)
+
+create event
+php artisan make:event (EventName)
+
+create model
+php artisan make:model (ModelName)
+
+create controller
+php artisan make:controller (ControllerName)

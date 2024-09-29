@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\CustomOrder;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 // Essential controllers
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -14,11 +17,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AddOrderController;
 use App\Http\Controllers\UploadOrderController;
 use App\Http\Controllers\UploadOrderMaleController;
-use App\Http\Controllers\CustomerSupportController;
+use App\Http\Controllers\FAQController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UploadOrderFemaleController;
 use App\Http\Controllers\ViewOrderController;
 use App\Http\Controllers\ViewCollectionsController;
+use App\Http\Controllers\CustomizeTShirtController;
+use App\Http\Controllers\CustomOrderController;
 
 // Employee controllers
 use App\Http\Controllers\ManageOrderController;
@@ -52,14 +57,18 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 
 // Redirect based on user role when accessing home
 Route::get('/home', function () {
-    $user = Auth::user();
+    $user = Auth::user(); // Get the authenticated user
 
-    if ($user->role == 'employee') {
-        return redirect()->route('employee.dashboard');
-    } elseif ($user->role == 'admin') {
-        return redirect()->route('admin.dashboard');
+    // Check if a user is authenticated
+    if ($user) {
+        if ($user->role == 'employee') {
+            return redirect()->route('employee.dashboard');
+        } elseif ($user->role == 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
     }
 
+    // Redirect to customer UI for unauthenticated users or other roles
     return redirect()->route('customerui.home');
 })->name('home');
 
@@ -72,6 +81,8 @@ Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
 Route::get('/uploadorder', [UploadOrderController::class, 'index'])->name('uploadorder');
 Route::get('/uploadordermale', [UploadOrderMaleController::class, 'index'])->name('uploadordermale');
 Route::get('/uploadorderfemale', [UploadOrderFemaleController::class, 'index'])->name('uploadorderfemale');
+Route::get('/faq', [FAQController::class, 'index'])->name('faq');
+
 
 // Routes that require authentication
 Route::middleware('auth')->group(function () {
@@ -82,10 +93,14 @@ Route::middleware('auth')->group(function () {
 
 // Routes that require the 'customer' role
 Route::middleware(['auth', 'role:customer'])->group(function () {
-    Route::get('/customersupport', [CustomerSupportController::class, 'index'])->name('customersupport');
     Route::get('/ViewOrder', [ViewOrderController::class, 'index'])->name('vieworder');
     Route::get('/viewcollections', [ViewCollectionsController::class, 'index'])->name('viewcollections');
     Route::get('/orderDetails', [orderDetailsController::class, 'index'])->name('orderDetails');
+
+    // 3D model
+    Route::get('/customizetshirt', function () {
+        return view('customerui.customizetshirt');
+    })->name('customizetshirt');
 });
 
 // Employee routes
@@ -135,3 +150,29 @@ Route::get('/chat/{recipient}', [AssistCustomerController::class, 'showChat'])->
 
 // Send Message Route
 Route::post('/send-message', [ChatController::class, 'sendMessage'])->middleware('auth');
+
+// QR Code Generation Route
+Route::get('/qrcode', function (Request $request) {
+    // Validate the request data
+    $validatedData = $request->validate([
+        'color' => 'required|string',
+        'collarType' => 'required|string',
+    ]);
+
+    // Save the customization data to the database
+    $order = CustomOrder::create([
+        'color' => $validatedData['color'],
+        'collar_type' => $validatedData['collarType'],
+    ]);
+
+    // Generate a dynamic URL with color parameter
+    $previewUrl = route('previeworder', ['id' => $order->id, 'color' => $order->color]);
+    $qrCode = QrCode::size(200)->generate($previewUrl);
+
+    // Return the QR code view
+    return view('qrcode', ['qrCode' => $qrCode]);
+})->name('qrcode');
+
+
+// Define route to preview a specific order
+Route::get('/previeworder/{id}', [CustomOrderController::class, 'show'])->name('previeworder');

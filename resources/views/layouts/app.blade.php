@@ -7,11 +7,10 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.customerheader')
-    @include('profile.edit')
+    @include('layouts.header')
 </head>
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen ">
           <!-- Include your header here -->
 
         <!-- Page Content -->

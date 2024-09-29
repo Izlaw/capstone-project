@@ -1,6 +1,8 @@
 import './bootstrap';
 
 import Alpine from 'alpinejs';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 window.Alpine = Alpine;
 
@@ -109,7 +111,7 @@ optionPngs.forEach(function(optionPng) {
     optionPng.style.cursor = 'pointer';
 });
 
-
+// user icon 
 document.addEventListener('DOMContentLoaded', function() {
     const userIcon = document.querySelector('.userIcon');
     const dropdown = document.querySelector('.userIconDropdown');
@@ -120,76 +122,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// chat js
-document.addEventListener('DOMContentLoaded', function () {
-    const messageForm = document.getElementById('message-form');
-    const messageInput = document.getElementById('message-input');
-    const messageList = document.getElementById('messages');
-    const userName = document.querySelector('meta[name="user-name"]').getAttribute('content');
 
-    messageForm.addEventListener('submit', function (e) {
-        e.preventDefault(); // Prevent the default form submission
-    
-        const message = messageInput.value;
-    
-        fetch('/send-message', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                message: message
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`HTTP error! Status: ${response.status}. Response: ${text}`);
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Message sent:', data); // Debug output
-            messageInput.value = ''; // Clear the input after sending
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-    
-
-    // Listen for real-time messages
-    window.Echo.private('chat')
-    .listen('MessageSent', (e) => {
-        // Extract data from event
-        const userName = e.user || 'Unknown User'; // Fallback if user name is not defined
-        const messageContent = e.message || 'No Content'; // Fallback if message content is not defined
-        const messageDate = e.date || 'Unknown Date'; // Fallback if date is not defined
-        const senderId = e.senderId || null; // Add senderId to your event data
-    
-        // Set this to the ID of the current user
-        const currentUserId = window.currentUserId || null;
-    
-        // Create a new message element
-        const messageElement = document.createElement('li');
-        messageElement.className = 'mb-2 flex'; // Tailwind margin-bottom for spacing and flexbox for alignment
-        
-        // Determine alignment based on whether the sender is the current user
-        const isSender = senderId === currentUserId;
-        messageElement.innerHTML = `
-            <div class="${isSender ? 'ml-auto text-right' : 'mr-auto text-left'}">
-                <strong class="text-white">${userName} (${messageDate})</strong><br>
-                <span class="bg-maroonbgcolor text-white p-2 rounded-lg inline-block w-auto h-auto">${messageContent}</span>
-            </div>
-        `;
-    
-        // Insert the new message at the top
-        const messagesContainer = document.getElementById('messages');
-        messagesContainer.insertBefore(messageElement, messagesContainer.firstChild);
-    
-        // Scroll to the top to show the latest message
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    });    
-});

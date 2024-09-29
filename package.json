@@ -16,7 +16,10 @@
         "vite": "^4.5.3"
     },
     "dependencies": {
+        "@jaames/iro": "^5.5.2",
         "laravel-echo": "^1.16.1",
-        "pusher-js": "^8.4.0-rc2"
+        "pusher-js": "^8.4.0-rc2",
+        "qrcode": "^1.5.4",
+        "three": "^0.169.0"
     }
 }

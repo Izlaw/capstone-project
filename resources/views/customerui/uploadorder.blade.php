@@ -6,13 +6,13 @@
     <title>Upload Order Page</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.customerheader')
+    @include('layouts.header')
 
 </head>
-<body class="bg-mainbackground bg-cover">
+<body class="bg-mainbackground bg-cover overflow-y-hidden">
 
 <!-- Ask for gender -->
-  <div class="QuestionContainer flex justify-center items-center h-85vh">
+  <div class="QuestionContainer flex justify-center items-center h-screen">
     <div class="BoxContainer bg-maroonbgcolor w-[400px] h-[300px] p-4 rounded-lg shadow-md bg-opacity-80 backdrop-blur-md text-center">
 
       <!-- Back button to addorderpage.html -->

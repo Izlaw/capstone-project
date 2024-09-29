@@ -32,9 +32,19 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function isAdmin()
+    {
+        return $this->role === 'admin'; 
+    }
+
     public function isEmployee()
     {
-        return $this->role === 'employee'; // Adjust according to your role setup
+        return $this->role === 'employee'; 
+    }
+
+    public function isCustomer()
+    {
+        return $this->role === 'customer'; 
     }
 }
 

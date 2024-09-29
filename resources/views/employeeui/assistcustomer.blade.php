@@ -6,7 +6,7 @@
     <title>Assist Customer</title>
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
-    @include('layouts.empheader')
+    @include('layouts.header')
 </head>
 <body>
     <h1 class="AssistCustomertxt text-center text-2xl">Assist Customer Page</h1>
