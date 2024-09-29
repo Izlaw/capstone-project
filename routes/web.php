@@ -18,10 +18,13 @@ use App\Http\Controllers\AddOrderController;
 use App\Http\Controllers\UploadOrderController;
 use App\Http\Controllers\UploadOrderMaleController;
 use App\Http\Controllers\FAQController;
+use App\Http\Controllers\FAQController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\UploadOrderFemaleController;
 use App\Http\Controllers\ViewOrderController;
 use App\Http\Controllers\ViewCollectionsController;
+use App\Http\Controllers\CustomizeTShirtController;
+use App\Http\Controllers\orderDetailsController;
 use App\Http\Controllers\CustomizeTShirtController;
 use App\Http\Controllers\CustomOrderController;
 
@@ -58,16 +61,21 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 // Redirect based on user role when accessing home
 Route::get('/home', function () {
     $user = Auth::user(); // Get the authenticated user
+    $user = Auth::user(); // Get the authenticated user
 
     // Check if a user is authenticated
     if ($user) {
+        // Check if a user is authenticated
+    if ($user) {
         if ($user->role == 'employee') {
-            return redirect()->route('employee.dashboard');
-        } elseif ($user->role == 'admin') {
-            return redirect()->route('admin.dashboard');
+                return redirect()->route('employee.dashboard');
+            } elseif ($user->role == 'admin') {
+                return redirect()->route('admin.dashboard');
+        }
         }
     }
 
+    // Redirect to customer UI for unauthenticated users or other roles
     // Redirect to customer UI for unauthenticated users or other roles
     return redirect()->route('customerui.home');
 })->name('home');
@@ -150,6 +158,11 @@ Route::get('/chat/{recipient}', [AssistCustomerController::class, 'showChat'])->
 
 // Send Message Route
 Route::post('/send-message', [ChatController::class, 'sendMessage'])->middleware('auth');
+
+Route::get('/customizetshirt', function () {
+    return view('customerui.customizetshirt');
+})->name('customizetshirt');
+
 
 // QR Code Generation Route
 Route::get('/qrcode', function (Request $request) {

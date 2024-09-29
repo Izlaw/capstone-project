@@ -13,3 +13,4 @@ php artisan make:model (ModelName)
 
 create controller
 php artisan make:controller (ControllerName)
+
