@@ -159,11 +159,6 @@ Route::get('/chat/{recipient}', [AssistCustomerController::class, 'showChat'])->
 // Send Message Route
 Route::post('/send-message', [ChatController::class, 'sendMessage'])->middleware('auth');
 
-Route::get('/customizetshirt', function () {
-    return view('customerui.customizetshirt');
-})->name('customizetshirt');
-
-
 // QR Code Generation Route
 Route::get('/qrcode', function (Request $request) {
     // Validate the request data
