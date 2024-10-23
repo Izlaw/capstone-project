@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use Illuminate\Http\Request;
 
-class CustomizeTshirtController extends Controller
+class CustomizeTShirtController extends Controller
 {
     /**
      * Show the t-shirt customization page.
