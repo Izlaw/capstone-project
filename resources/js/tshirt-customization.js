@@ -12,7 +12,6 @@ let previousMousePosition = { x: 0, y: 0 };
 let selectedColor = "#ffffff"; // Default color
 let collarType = "Round"; // Example collar type
 
-
 // Customize
 function init() {
     // Scene setup
@@ -125,30 +124,33 @@ function init() {
         }
     });
 
-    // Confirm Order button event
+    // confirm order
     document.getElementById('confirmOrder').addEventListener('click', async () => {
         // Capture the customization data
         const customizations = {
             color: selectedColor,
             collarType: collarType,
-            // Add more customization attributes as needed
+            size_xs: document.querySelector('input[name="size_xs"]').value || 0,
+            size_s: document.querySelector('input[name="size_s"]').value || 0,
+            size_m: document.querySelector('input[name="size_m"]').value || 0,
+            size_l: document.querySelector('input[name="size_l"]').value || 0,
+            size_xl: document.querySelector('input[name="size_xl"]').value || 0,
         };
-
-        // Convert the customizations to query parameters
-        const queryParams = new URLSearchParams(customizations).toString();
-
-        // Generate the full URL for the QR code view
-        const qrCodeUrl = `${window.location.origin}/qrcode?${queryParams}`;
-
+    
+        // Get the CSRF token from the meta tag
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
         try {
             // Fetch the QR code view from the backend
-            const response = await fetch(qrCodeUrl, {
-                method: 'GET',
+            const response = await fetch('/qrcode', {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'text/html',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken, // Include CSRF token
                 },
+                body: JSON.stringify(customizations), // Send customizations as JSON
             });
-
+    
             if (response.ok) {
                 const qrCodeHtml = await response.text(); // Get the entire HTML content
                 showQRCodeModal(qrCodeHtml); // Show the QR code modal

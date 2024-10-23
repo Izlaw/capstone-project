@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Events\MessageSent; // Ensure you import your event if used
 use Illuminate\Support\Facades\Auth; // For user authentication
