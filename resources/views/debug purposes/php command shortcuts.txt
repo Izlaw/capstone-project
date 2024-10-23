@@ -16,3 +16,31 @@ php artisan make:model (ModelName)
 
 create controller
 php artisan make:controller (ControllerName)
+
+how to sync dev branch to the master branch
+# Step 1: Switch to the `dev` Branch
+git checkout dev
+
+# Step 2: Ensure Your `dev` Branch is Up to Date
+git fetch origin            # Fetch the latest changes from the remote repository
+git pull origin dev         # Pull the latest changes into your local `dev` branch
+
+# Step 3: Switch to the `master` Branch
+git checkout master         # Change to the `master` branch
+
+# Step 4: Fetch the Latest Changes for `master`
+git fetch origin            # Fetch the latest changes from the remote repository
+git pull origin master      # Pull the latest changes into your local `master` branch
+
+# Step 5: Merge `dev` into `master`
+git merge dev               # Merge changes from the `dev` branch into the `master` branch
+
+# Step 6: Resolve Any Merge Conflicts
+# If there are conflicts, open the conflicting files and resolve them,
+# then stage the resolved files:
+git add <file>              # Stage the resolved files
+# After resolving conflicts, complete the merge:
+git commit -m "Merged changes from dev into master"  # Commit the merge
+
+# Step 7: Push the Updated `master` Branch
+git push origin master      # Push the updated `master` branch to the remote repository
