@@ -9,9 +9,15 @@ class CustomOrder extends Model
 {
     use HasFactory;
 
+    protected $table = 'customorders';
     protected $fillable = [
-        'color',
-        'collar_type',
-        // Add any other fields you want to be mass assignable
+        'color', 
+        'collar_type', 
+        'size_xs', 
+        'size_s', 
+        'size_m', 
+        'size_l', 
+        'size_xl',
+        'total',
     ];
 }

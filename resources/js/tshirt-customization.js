@@ -12,7 +12,6 @@ let previousMousePosition = { x: 0, y: 0 };
 let selectedColor = "#ffffff"; // Default color
 let collarType = "Round"; // Example collar type
 
-
 // Customize
 function init() {
     // Scene setup
@@ -125,58 +124,100 @@ function init() {
         }
     });
 
-    // Confirm Order button event
-    document.getElementById('confirmOrder').addEventListener('click', async () => {
-        // Capture the customization data
-        const customizations = {
-            color: selectedColor,
-            collarType: collarType,
-            // Add more customization attributes as needed
-        };
+    // Confirm order event
+document.getElementById('confirmOrder').addEventListener('click', async () => {
+    // Capture the customization data
+    const customizations = {
+        color: selectedColor,
+        collarType: collarType,
+        size_xs: document.querySelector('input[name="size_xs"]').value || 0,
+        size_s: document.querySelector('input[name="size_s"]').value || 0,
+        size_m: document.querySelector('input[name="size_m"]').value || 0,
+        size_l: document.querySelector('input[name="size_l"]').value || 0,
+        size_xl: document.querySelector('input[name="size_xl"]').value || 0,
+    };
 
-        // Convert the customizations to query parameters
-        const queryParams = new URLSearchParams(customizations).toString();
+    // Get the CSRF token from the meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        // Generate the full URL for the QR code view
-        const qrCodeUrl = `${window.location.origin}/qrcode?${queryParams}`;
+    try {
+        // Fetch the QR code view from the backend
+        const response = await fetch('/qrcode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify(customizations),
+        });
 
-        try {
-            // Fetch the QR code view from the backend
-            const response = await fetch(qrCodeUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'text/html',
-                },
-            });
-
-            if (response.ok) {
-                const qrCodeHtml = await response.text(); // Get the entire HTML content
-                showQRCodeModal(qrCodeHtml); // Show the QR code modal
-            } else {
-                console.error('Failed to fetch QR code view:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error fetching QR code view:', error);
+        if (response.ok) {
+            const qrCodeHtml = await response.text();
+            showQRCodeModal(qrCodeHtml, customizations);
+        } else {
+            console.error('Failed to fetch QR code view:', response.status, response.statusText);
         }
+        
+    } catch (error) {
+        console.error('Error fetching QR code view:', error);
+    }
+});
+
+// Function to display QR code in a modal
+function showQRCodeModal(qrCodeHtml, customizations) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Construct the modal HTML
+    const modalHtml = `
+        <div id="qrCodeModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div class="bg-white p-5 rounded-lg shadow-lg text-center max-w-md w-full">
+                ${qrCodeHtml} <!-- Insert the QR code view directly here -->
+                <p class="mt-2">Scan this QR code to view your customized design!</p>
+                <button id="closeModal" class="mt-4 p-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300">Close</button>
+            </div>
+        </div>
+    `;
+
+    // Insert the modal into the DOM
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // Close modal event
+    document.getElementById('closeModal').addEventListener('click', () => {
+        document.getElementById('qrCodeModal').remove();
     });
 
-    // Function to display QR code in a modal
-    function showQRCodeModal(qrCodeHtml) {
-        const modalHtml = `
-            <div id="qrCodeModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div class="bg-white p-5 rounded-lg shadow-lg text-center max-w-md w-full">
-                    ${qrCodeHtml} <!-- Insert the QR code view directly here -->
-                    <button id="closeModal" class="mt-4 p-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300">Close</button>
-                </div>
-            </div>
-        `;
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    // Download billing statement event
+    document.getElementById('downloadBillingStatement').addEventListener('click', () => {
+        // Prepare the URL for generating the billing statement
+        const url = '/generate-billing-statement'; // Your endpoint for generating the PDF
 
-        // Close modal event
-        document.getElementById('closeModal').addEventListener('click', () => {
-            document.getElementById('qrCodeModal').remove();
-        });
-    }
+        // Create a form to submit the customizations data
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = url;
+
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+
+        // Add customization data
+        for (const [key, value] of Object.entries(customizations)) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+        }
+
+        document.body.appendChild(form);
+        form.submit(); // Submit the form to download the PDF
+        form.remove(); // Clean up
+    });
+}
+
 
     animate();
 }

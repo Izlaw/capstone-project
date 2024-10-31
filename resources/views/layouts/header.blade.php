@@ -37,12 +37,21 @@
         <div class="userIconDropdown hidden absolute top-2 right-0 mt-10 w-48 bg-white rounded-md shadow-lg py-2 z-1">
             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
 
-            <form id="auth-form" method="POST" action="{{ Auth::check() ? route('logout') : route('login') }}">
+            @if (Auth::check())
+            <!-- Logout form (POST request) -->
+            <form id="logout-form" method="POST" action="{{ route('logout') }}">
                 @csrf
-                <a href="#" onclick="event.preventDefault(); document.getElementById('auth-form').submit();" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    {{ Auth::check() ? 'Logout' : 'Login' }}
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Logout
                 </a>
             </form>
+            @else
+                <!-- Login link (GET request) -->
+                <a href="{{ route('login') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Login
+                </a>
+            @endif
+
         </div>
     </div>
 </header>

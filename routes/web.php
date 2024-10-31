@@ -1,34 +1,32 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\CustomOrder;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
-// Essential controllers
+// User controllers
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\ChatController;
+use App\Http\Controllers\User\ChatController;
+use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\LoginController;
+use App\Http\Controllers\User\ProfileController; 
 
-// Customer routes
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AddOrderController;
-use App\Http\Controllers\UploadOrderController;
-use App\Http\Controllers\UploadOrderMaleController;
-use App\Http\Controllers\FAQController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\UploadOrderFemaleController;
-use App\Http\Controllers\ViewOrderController;
-use App\Http\Controllers\ViewCollectionsController;
-use App\Http\Controllers\CustomizeTShirtController;
-use App\Http\Controllers\orderDetailsController;
-use App\Http\Controllers\CustomOrderController;
+// Customer controllers
+use App\Http\Controllers\Customer\AddOrderController;
+use App\Http\Controllers\Customer\AddCustomOrderController;
+use App\Http\Controllers\Customer\CustomizeTShirtController;
+use App\Http\Controllers\Customer\CustomOrderController;
+use App\Http\Controllers\Customer\FAQController;
+use App\Http\Controllers\Customer\OrderDetailsController;
+use App\Http\Controllers\Customer\ViewCollectionsController;
+use App\Http\Controllers\Customer\ViewOrderController;
 
 // Employee controllers
-use App\Http\Controllers\ManageOrderController;
-use App\Http\Controllers\AssistCustomerController;
+use App\Http\Controllers\Employee\ManageOrderController;
+use App\Http\Controllers\Employee\AssistCustomerController;
 
 // Admin controllers
 
@@ -84,9 +82,8 @@ Route::get('/', function () {
 })->name('customerui.home');
 
 Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
-Route::get('/uploadorder', [UploadOrderController::class, 'index'])->name('uploadorder');
-Route::get('/uploadordermale', [UploadOrderMaleController::class, 'index'])->name('uploadordermale');
-Route::get('/uploadorderfemale', [UploadOrderFemaleController::class, 'index'])->name('uploadorderfemale');
+Route::get('/addcustomorder', [AddOrderController::class, 'askGender'])->name('addcustomorder');
+Route::get('/addcustomorder/{gender}', [AddOrderController::class, 'addCustomOrder'])->name('addcustomorder');
 Route::get('/faq', [FAQController::class, 'index'])->name('faq');
 
 
@@ -102,6 +99,8 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/ViewOrder', [ViewOrderController::class, 'index'])->name('vieworder');
     Route::get('/viewcollections', [ViewCollectionsController::class, 'index'])->name('viewcollections');
     Route::get('/orderDetails', [orderDetailsController::class, 'index'])->name('orderDetails');
+    Route::get('/uploadorder', [AddOrderController::class, 'uploadCustomOrder'])->name('uploadorder');
+
 
     // 3D model
     Route::get('/customizetshirt', function () {
@@ -157,28 +156,10 @@ Route::get('/chat/{recipient}', [AssistCustomerController::class, 'showChat'])->
 // Send Message Route
 Route::post('/send-message', [ChatController::class, 'sendMessage'])->middleware('auth');
 
-// QR Code Generation Route
-Route::get('/qrcode', function (Request $request) {
-    // Validate the request data
-    $validatedData = $request->validate([
-        'color' => 'required|string',
-        'collarType' => 'required|string',
-    ]);
-
-    // Save the customization data to the database
-    $order = CustomOrder::create([
-        'color' => $validatedData['color'],
-        'collar_type' => $validatedData['collarType'],
-    ]);
-
-    // Generate a dynamic URL with color parameter
-    $previewUrl = route('previeworder', ['id' => $order->id, 'color' => $order->color]);
-    $qrCode = QrCode::size(200)->generate($previewUrl);
-
-    // Return the QR code view
-    return view('qrcode', ['qrCode' => $qrCode]);
-})->name('qrcode');
-
+Route::post('/qrcode', [CustomOrderController::class, 'generateQRCode'])->name('qrcode');
+Route::post('/generate-billing-statement', [CustomOrderController::class, 'generateBillingStatement']);
 
 // Define route to preview a specific order
 Route::get('/previeworder/{id}', [CustomOrderController::class, 'show'])->name('previeworder');
+
+

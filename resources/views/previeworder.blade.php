@@ -19,6 +19,16 @@
                 ({{ $order->color }})
             </p>
             <p class="mb-2"><strong>Collar Type:</strong> {{ $order->collar_type }}</p>
+            <p class="mb-2"><strong>Sizes:</strong>
+            <ul>
+                <li>Extra Small: {{ $order->size_xs }}</li>
+                <li>Small: {{ $order->size_s }}</li>
+                <li>Medium: {{ $order->size_m }}</li>
+                <li>Large: {{ $order->size_l }}</li>
+                <li>Extra Large: {{ $order->size_xl }}</li>
+            </ul></p>
+            <p class="mb-2"><strong>Total Amount:</strong> {{ $order->total }}</p>
+
             <!-- Add more order details here as needed -->
         </div>
 
