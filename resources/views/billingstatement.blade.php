@@ -3,62 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Billing Statement</title>
-    @vite('resources/css/app.css') 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7fafc;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .header p {
+            margin: 0;
+            font-size: 14px;
+            color: #718096;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .section p {
+            margin: 0;
+            font-size: 16px;
+            color: #4a5568;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th,
+        .table td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: left;
+        }
+        .table th {
+            background-color: #edf2f7;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            color: #2d3748;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #718096;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold text-center">Billing Statement</h1>
-        <div class="mt-4">
-            <h2 class="text-xl font-semibold">Information</h2>
-            <p>Name: {{ $customerName }}</p>
-            <p>Email: {{ $customerEmail }}</p>
-            <p>Address: {{ $customerAddress }}</p>
+    <div class="container">
+        <!-- Company Information -->
+        <div class="header">
+            <h1>7 GUYS HOUSE OF FASHION</h1>
+            <p>Burgos - Mabini - Plaza, 6 Burgos St, La Paz, Iloilo City, 5000 Iloilo</p>
+            <p>Contact: +123 456 7890 | email@example.com</p>
         </div>
 
-        <div class="mt-4">
-            <h2 class="text-xl font-semibold">Order Summary</h2>
-            <table class="min-w-full bg-white border border-gray-300">
+        <div class="section">
+            <h2>Billing Statement</h2>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="section">
+            <h2>Customer Information</h2>
+            <p><strong>Name:</strong> {{ $firstName }} {{ $lastName }}</p>
+            <p><strong>Address:</strong> {{ $customerAddress }}</p>
+        </div>
+
+        <!-- Order Information -->
+        <div class="section">
+            <h2>Order Information</h2>
+            @isset($uploadOrder)
+                <p><strong>Order Name:</strong> {{ $uploadOrder->upName }}</p>
+            @else
+                <p><strong>Order Name:</strong> T-Shirt</p>
+            @endisset
+            <p><strong>Order Date:</strong> {{ \Carbon\Carbon::parse($order->dateOrder)->format('M, j Y') }}</p>
+        </div>
+
+        <!-- Order Details -->
+        <div class="section">
+            <h2>Order Details</h2>
+            <table class="table">
                 <thead>
                     <tr>
-                        <th class="py-2 px-4 border-b">Item</th>
-                        <th class="py-2 px-4 border-b">Quantity</th>
-                        <th class="py-2 px-4 border-b">Price</th>
+                        <th>Size</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($sizes as $size)
                     <tr>
-                        <td class="py-2 px-4 border-b">T-Shirt (XS)</td>
-                        <td class="py-2 px-4 border-b">{{ $size_xs }}</td>
-                        <td class="py-2 px-4 border-b">PHP {{ number_format($price_xs * $size_xs, 2) }}</td>
+                        <!-- For collection orders, the size name may be stored as pivot_sizeName -->
+                        <td>{{ isset($size->pivot_sizeName) ? $size->pivot_sizeName : $size->sizeName }}</td>
+                        <!-- Use pivot->sizePrice if set, otherwise use sizePrice -->
+                        <td>
+                            @if(isset($size->pivot->sizePrice))
+                                {{ number_format($size->pivot->sizePrice, 2) }}
+                            @else
+                                {{ number_format($size->sizePrice, 2) }}
+                            @endif
+                        </td>
+                        <!-- For quantity, check both pivot->quantity and pivot_quantity -->
+                        <td>{{ isset($size->pivot->quantity) ? $size->pivot->quantity : $size->pivot_quantity }}</td>
+                        <!-- Calculate total -->
+                        <td>
+                            @php
+                                $price = isset($size->pivot->sizePrice) ? $size->pivot->sizePrice : $size->sizePrice;
+                                $quantity = isset($size->pivot->quantity) ? $size->pivot->quantity : $size->pivot_quantity;
+                            @endphp
+                            {{ number_format($price * $quantity, 2) }}
+                        </td>
                     </tr>
-                    <tr>
-                        <td class="py-2 px-4 border-b">T-Shirt (S)</td>
-                        <td class="py-2 px-4 border-b">{{ $size_s }}</td>
-                        <td class="py-2 px-4 border-b">PHP {{ number_format($price_s * $size_s, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 px-4 border-b">T-Shirt (M)</td>
-                        <td class="py-2 px-4 border-b">{{ $size_m }}</td>
-                        <td class="py-2 px-4 border-b">PHP {{ number_format($price_m * $size_m, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 px-4 border-b">T-Shirt (L)</td>
-                        <td class="py-2 px-4 border-b">{{ $size_l }}</td>
-                        <td class="py-2 px-4 border-b">PHP {{ number_format($price_l * $size_l, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 px-4 border-b">T-Shirt (XL)</td>
-                        <td class="py-2 px-4 border-b">{{ $size_xl }}</td>
-                        <td class="py-2 px-4 border-b">PHP {{ number_format($price_xl * $size_xl, 2) }}</td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
+            <p class="total">Total Amount: PHP{{ number_format($order->orderTotal, 2) }}</p>
         </div>
 
-        <div class="mt-4">
-            <h2 class="text-xl font-semibold">Total Amount</h2>
-            <p class="font-bold">PHP {{ number_format($totalAmount, 2) }}</p>
+        <!-- Footer -->
+        <div class="footer">
+            <p>Thank you for your purchase!</p>
+            <p>For inquiries, contact us at: +123 456 7890</p>
         </div>
     </div>
 </body>

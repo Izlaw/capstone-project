@@ -6,22 +6,31 @@ use Illuminate\Database\Eloquent\Model;
 
 class Message extends Model
 {
-    // Specify the table if it's not following Laravel's naming convention
     protected $table = 'messages';
-    protected $primaryKey = 'message_id';
-    protected $fillable = [
-        'content', 
-        'date', 
-        'status', 
-        'user_id',
-        'conversation_id',
-    ];
-
+    protected $primaryKey = 'messID';
     public $timestamps = false;
 
+    protected $fillable = [
+        'messContent',
+        'messDate',
+        'user_id',
+        'convoID',
+    ];
+
+    // Ensure messDate is treated as a Carbon instance
+    protected $casts = [
+        'messDate' => 'datetime',
+    ];
+
+    // Relationship with User model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
-}
 
+    // Relationship with Conversation model
+    public function conversation()
+    {
+        return $this->belongsTo(Conversation::class, 'convoID', 'convoID');
+    }
+}

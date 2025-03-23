@@ -4,71 +4,141 @@ namespace App\Http\Controllers\Employee;
 
 use Illuminate\Http\Request;
 use App\Models\Message;
+use App\Models\Conversation;  // Import the Conversation model
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
+use App\Events\ConversationCreated;
+use App\Events\MessageSent;
 
 
 class AssistCustomerController extends Controller
 {
-    public function index()
+    public function listConversations()
     {
-        // This method lists all conversations
-        $userId = Auth::id();
-        $conversations = Message::select('user_id')
-            ->where('status', 'active')
-            ->where('user_id', '!=', $userId)
-            ->groupBy('user_id')
-            ->with('user')
-            ->get();
-        
+        // Fetch all conversations (or a subset as needed)
+        $conversations = Conversation::all(); // Adjust the query as per your needs
+
+        // Return the 'assistcustomer' view with the conversations
         return view('employeeui.assistcustomer', compact('conversations'));
     }
 
     public function showConversations()
     {
-        $userId = Auth::id(); // Get the current employee's ID
+        // Get the current employee's ID
+        $userId = Auth::id();
+        Log::debug('Employee Controller: showConversations method called', ['employee_id' => $userId]);
 
-        // Fetch the most recent message for each user
-        $conversations = Message::select('user_id', 'content', 'date')
-            ->where('status', 'active')
-            ->where('user_id', '!=', $userId)
-            ->latest('date') // Order by date to get the latest message
-            ->get()
-            ->groupBy('user_id') // Group by user ID
-            ->map(function ($messages) {
-                return $messages->first(); // Get the most recent message for each user
-            });
+        // Retrieve conversations where the user is not the current employee and is a customer
+        $conversations = Conversation::where('user_id', '!=', $userId)
+            ->whereHas('user', function ($query) {
+                $query->where('role', 'customer');
+            })
+            ->with(['messages' => function ($query) {
+                // Get the latest message for each conversation by 'messDate'
+                $query->latest('messDate')->limit(1);
+            }])
+            ->with('user') // Eager load the user to check the user's info easily
+            ->get();
 
-        // Load user details for each conversation
-        $conversations = $conversations->map(function ($message) {
-            $message->user = $message->user; // Load the user relationship
-            return $message;
+        // Log the retrieved conversations
+        Log::debug('Employee Controller: Conversations retrieved', [
+            'conversation_count' => $conversations->count(),
+            'conversations' => $conversations->toArray(),
+        ]);
+
+        // Iterate over the conversations to attach the latest message
+        $conversations->map(function ($conversation) use ($userId) {
+            // Get the latest message from the eager-loaded messages
+            $message = $conversation->messages->first(); // Latest message (first item)
+
+            // Log the latest message details or if no message is found
+            if ($message) {
+                Log::debug('Employee Controller: Latest message found for conversation', [
+                    'convoID' => $conversation->convoID,
+                    'messID' => $message->messID,
+                    'content' => $message->messContent,
+                ]);
+            } else {
+                Log::debug('Employee Controller: No messages found for conversation', ['convoID' => $conversation->convoID]);
+            }
+
+            // Attach the latest message to the conversation object
+            $conversation->latestMessage = $message; // Add the latest message content to the conversation
+
+            // Log the status of attaching the latest message to the conversation
+            Log::debug('Employee Controller: Latest message attached', [
+                'convoID' => $conversation->convoID,
+                'latestMessage' => $message ? $message->messContent : 'No message',
+            ]);
+
+            return $conversation;
         });
 
-        return view('employeeui.assistcustomer', compact('conversations'));
+        // Log the number of conversations retrieved
+        Log::debug('Employee Controller: Total conversations fetched', ['conversation_count' => $conversations->count()]);
+
+        // Return the 'assistcustomer' view with the list of conversations
+        return view('employeeui.assistcustomer', [
+            'conversations' => $conversations,
+        ]);
     }
 
-    public function showChat($recipient)
+    public function showChat($convoID)
     {
-        $recipientUser = User::find($recipient);
-        if (!$recipientUser) {
-            abort(404, 'Recipient not found');
+        // Log the convoID with a label for the employee controller
+        Log::debug('Employee Controller: showChat method called', ['convoID' => $convoID]);
+
+        // Log the type of the $convoID to check if it's an integer or string
+        Log::debug('convoID type: ', ['type' => gettype($convoID)]);
+
+        // Attempting to find the conversation for the given convoID
+        Log::debug('Attempting to find conversation for convoID: ' . $convoID);
+
+        // Query the Conversation model for the given convoID
+        $conversation = Conversation::where('convoID', $convoID)->first();
+
+        // Log the SQL query (ensure you enable query logging in AppServiceProvider)
+
+        if (!$conversation) {
+            // Log if the conversation was not found
+            Log::debug('Employee Controller: Conversation not found for convoID', ['convoID' => $convoID]);
+            return redirect()->route('home')->with('error', 'Conversation not found.');
         }
 
-        $userId = Auth::id(); // Get the current authenticated user's ID
+        // Log the conversation details once found
+        Log::debug('Employee Controller: Conversation found', ['conversation' => $conversation]);
 
-        // Fetch messages between the authenticated user and the recipient
-        $messages = Message::where(function ($query) use ($recipient, $userId) {
-            $query->where('user_id', $userId)
-                ->where('conversation_id', $recipient); // Adjust if conversation_id is the recipient ID
-        })->orWhere(function ($query) use ($recipient, $userId) {
-            $query->where('user_id', $recipient)
-                ->where('conversation_id', $userId); // Adjust if conversation_id is the recipient ID
-        })->with('user') // Load the user relationship
-        ->get();
+        // Retrieve the messages for the conversation
+        $messages = Message::where('convoID', $convoID)->get();
 
-        return view('chat', ['recipient' => $recipientUser, 'messages' => $messages]);
+        // Log the number of messages retrieved
+        Log::debug('Employee Controller: Messages fetched', ['message_count' => $messages->count()]);
+
+        // Check if the current user is authorized to view the conversation
+        if (!Auth::user()->isEmployee()) {
+            // Log if the user is not authorized
+            Log::debug('Employee Controller: Unauthorized access attempt', ['user_id' => Auth::id()]);
+            return redirect()->route('home')->with('error', 'You are not authorized to view this conversation.');
+        }
+
+        // Log the user authorization check
+        Log::debug('Employee Controller: User authorized', ['user_id' => Auth::id()]);
+
+        // Retrieve the customer (the user who started the conversation)
+        $recipient = User::find($conversation->user_id);
+
+        if (!$recipient) {
+            // Log if the customer is not found
+            Log::debug('Employee Controller: Customer not found', ['user_id' => $conversation->user_id]);
+            return redirect()->route('home')->with('error', 'Customer not found.');
+        }
+
+        // Log the customer details
+        Log::debug('Employee Controller: Customer found', ['recipient' => $recipient]);
+
+        // Pass the conversation, messages, recipient, and convoID to the view
+        return view('chat', compact('conversation', 'messages', 'convoID', 'recipient'));
     }
 }
-

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-
+use Carbon\Carbon;
 
 class RegisteredUserController extends Controller
 {
@@ -29,37 +29,44 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-
-    public function store(Request $request): RedirectResponse {
-    try {
+    public function store(Request $request): RedirectResponse
+    {
+        // Validation
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'sex' => ['required', 'string', 'in:male,female,other'],
-            'bday' => ['required', 'date'],
-            'contact' => ['required','string', 'max:11'],
+            'bday' => [
+                'required',
+                'date',
+                'before:' . Carbon::now()->subYears(18)->toDateString(),
+            ],
+            'contact' => ['required', 'string', 'max:11'],
             'address' => ['required', 'string', 'max:255'],
+        ], [
+            'bday.before' => 'You must be 18 years old or above!'
         ]);
-        } catch (ValidationException $e) {
-        return redirect()->back()->withErrors($e->validator)->withInput();
-    }
-    
-    $user = new User();
-    $user->name = $request->name;
-    $user->email = $request->email;
-    $user->password = Hash::make($request->password);
-    $user->role = 'customer';
-    $user->sex = $request->sex;
-    $user->bday = $request->bday;
-    $user->contact = $request->contact;
-    $user->address = $request->address;
 
-    $user->save();
-    
-    event(new Registered($user));
-    Auth::login($user);
-    return redirect()->route('login');
-    
-}
+        // Create a new user and save
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'customer', // Assuming 'customer' as default role
+            'sex' => $request->sex,
+            'bday' => $request->bday,
+            'contact' => $request->contact,
+            'address' => $request->address,
+        ]);
+
+        event(new Registered($user));
+
+        // Remove to automatically log the user in after register
+        // Auth::login($user);
+
+        return redirect()->route('login');
+    }
 }

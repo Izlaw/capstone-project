@@ -2,33 +2,47 @@
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\CustomOrder;
+use App\Models\Message;
+use App\Events\MessageSent;
+use App\Events\ExampleEvent;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
+use App\Http\Controllers\PusherAuthController;
+use App\Http\Controllers\ViewController;
+
+// Debugging
+use App\Http\Controllers\LogController;
 
 // User controllers
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\User\ChatController;
-use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\LoginController;
-use App\Http\Controllers\User\ProfileController; 
+use App\Http\Controllers\User\ProfileController;
 
 // Customer controllers
-use App\Http\Controllers\Customer\AddOrderController;
-use App\Http\Controllers\Customer\AddCustomOrderController;
-use App\Http\Controllers\Customer\CustomizeTShirtController;
 use App\Http\Controllers\Customer\CustomOrderController;
+use App\Http\Controllers\Customer\CollectionOrderController;
+use App\Http\Controllers\Customer\UploadOrderController;
 use App\Http\Controllers\Customer\FAQController;
 use App\Http\Controllers\Customer\OrderDetailsController;
-use App\Http\Controllers\Customer\ViewCollectionsController;
 use App\Http\Controllers\Customer\ViewOrderController;
 
+// Staff controllers
+use App\Http\Controllers\ManageOrderController;
+
 // Employee controllers
-use App\Http\Controllers\Employee\ManageOrderController;
 use App\Http\Controllers\Employee\AssistCustomerController;
+use App\Http\Controllers\Employee\EmployeeController;
 
 // Admin controllers
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ManageEmployeeController;
 
 /*
 |---------------------------------------------------------------------------
@@ -40,54 +54,40 @@ use App\Http\Controllers\Employee\AssistCustomerController;
 |---------------------------------------------------------------------------
 */
 
+
 /*
 Route syntax: 
 Route::('/url', [Controller::class, 'method'])->name('route.name')->middleware('middleware');
 */
 
-// Authentication routes
+// Debugging
+Route::post('/log', [LogController::class, 'logMessage'])->name('log.message');
+
+Broadcast::routes();
+// Authentication Routes
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Register routes
+// Register Routes
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
-// Redirect based on user role when accessing home
-Route::get('/home', function () {
-    $user = Auth::user(); // Get the authenticated user
-    $user = Auth::user(); // Get the authenticated user
+// Home route to redirect based on user role
+Route::get('/home', [ViewController::class, 'redirectUserToHome'])->name('home');
 
-    // Check if a user is authenticated
-    if ($user) {
-        // Check if a user is authenticated
-    if ($user) {
-        if ($user->role == 'employee') {
-                return redirect()->route('employee.dashboard');
-            } elseif ($user->role == 'admin') {
-                return redirect()->route('admin.dashboard');
-        }
-        }
-    }
-
-    // Redirect to customer UI for unauthenticated users or other roles
-    // Redirect to customer UI for unauthenticated users or other roles
-    return redirect()->route('customerui.home');
-})->name('home');
-
-// Public routes (accessible to guests and registered users)
+// Public Routes (Accessible to guests and registered users)
 Route::get('/', function () {
     return view('customerui.home');
 })->name('customerui.home');
 
-Route::get('/addorder', [AddOrderController::class, 'index'])->name('addorder');
-Route::get('/addcustomorder', [AddOrderController::class, 'askGender'])->name('addcustomorder');
-Route::get('/addcustomorder/{gender}', [AddOrderController::class, 'addCustomOrder'])->name('addcustomorder');
-Route::get('/faq', [FAQController::class, 'index'])->name('faq');
+// Guest Routes (accessible to everyone)
+Route::get('/addorder', [ViewController::class, 'showaddOrder'])->name('addorder');
+Route::get('/addcustomorder', [ViewController::class, 'askGender'])->name('addcustomorder');
+Route::get('/addcustomorder', [ViewController::class, 'addCustomOrder'])->name('addcustomorder');
+Route::get('/faq', [ViewController::class, 'showFaq'])->name('faq');
 
-
-// Routes that require authentication
+// Routes that require authentication (for authenticated users only)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -96,70 +96,63 @@ Route::middleware('auth')->group(function () {
 
 // Routes that require the 'customer' role
 Route::middleware(['auth', 'role:customer'])->group(function () {
-    Route::get('/ViewOrder', [ViewOrderController::class, 'index'])->name('vieworder');
-    Route::get('/viewcollections', [ViewCollectionsController::class, 'index'])->name('viewcollections');
-    Route::get('/orderDetails', [orderDetailsController::class, 'index'])->name('orderDetails');
-    Route::get('/uploadorder', [AddOrderController::class, 'uploadCustomOrder'])->name('uploadorder');
-
-
-    // 3D model
-    Route::get('/customizetshirt', function () {
-        return view('customerui.customizetshirt');
-    })->name('customizetshirt');
+    Route::get('/vieworder', [ViewOrderController::class, 'viewOrders'])->name('vieworder');
+    Route::get('/viewcollections', [ViewController::class, 'showViewCollections'])->name('viewcollections');
+    Route::get('/orderdetails/{orderId}', [OrderDetailsController::class, 'showOrderDetails'])->name('orderdetails');
+    Route::get('/uploadorder', [ViewController::class, 'uploadCustomOrder'])->name('uploadorder');
+    Route::get('/customize', [CustomOrderController::class, 'customize'])->name('customize');
+    Route::post('/collection-order', [CollectionOrderController::class, 'store'])->name('collection.order.store');
+    Route::post('/qrcode', [CustomOrderController::class, 'generateQRCode'])->name('qrcode');
+    Route::get('/download-qrcode/{customID}', [CustomOrderController::class, 'downloadQRCode'])->name('download.qrcode');
+    Route::post('/generate-billing-statement', [CustomOrderController::class, 'generateBillingStatement']);
+    Route::get('/previeworder/{id}', [CustomOrderController::class, 'previewOrder'])->name('previeworder');
+    Route::get('/send-qrcode', [CustomOrderController::class, 'sendQRCodeToEmployee'])->name('sendQRCodeToEmployee');
+    Route::get('/supportchat/{convoID}', [ChatController::class, 'showChat'])->name('supportchat');
+    Route::post('/upload-design-and-send-message', [UploadOrderController::class, 'uploadDesignAndSendMessage'])->name('upload-design-and-send-message');
 });
 
-// Employee routes
+// Staff routes
+Route::middleware(['auth'])->group(function () {
+    Route::resource('manageOrder', ManageOrderController::class);
+});
+
+// Employee Routes (Require 'employee' role)
 Route::middleware(['auth', 'role:employee'])->group(function () {
-    Route::get('/employeedashboard', function () {
-        return view('employeeui.empdboard');
-    })->name('employee.dashboard');
-    Route::get('/manageorder', [ManageOrderController::class, 'index'])->name('employeeui.manageorder');
-    Route::get('/assistcustomer', [AssistCustomerController::class, 'index'])->name('employeeui.assistcustomer');
-    Route::get('/assistcustomer', [AssistCustomerController::class, 'showConversations'])->name('employeeui.assistcustomer');
+    Route::get('/employeedashboard', [ViewController::class, 'showEmpDboard'])->name('employee.dashboard');
+    Route::get('/manageorder', [EmployeeController::class, 'showEmpManageOrder'])->name('empManageOrder');
+    Route::get('/empmanagecollections', [ViewController::class, 'showEmpManageCollections'])->name('empmanagecollections');
+    Route::get('/assistcustomer', [AssistCustomerController::class, 'showConversations'])->name('assistcustomer.index');
+    Route::get('/helpdesk/{convoID}', [AssistCustomerController::class, 'showChat'])->name('assistcustomer.show');
 });
 
-// Admin routes
+// Admin Routes (Require 'admin' role)
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admindashboard', function () {
-        return view('adminui.admindboard');
-    })->name('admin.dashboard');
+    Route::get('/admindashboard', [ViewController::class, 'showAdminDboard'])->name('admin.dashboard');
+    Route::get('/adminprices', [ViewController::class, 'showAdminPrices'])->name('adminPrices');
+    Route::post('/update-sizes', [AdminController::class, 'updateSizes'])->name('updateSizes');
+    Route::get('/adminorder', [ViewController::class, 'showAdminManageOrder'])->name('adminOrder');
+    Route::get('/manageemployees', [ViewController::class, 'showManageEmployees'])->name('manageEmployees');
+    Route::get('/admincollect', [ViewController::class, 'showAdminCollections'])->name('adminCollect');
 });
 
-// Access denied route
+// Access Denied route
 Route::get('/access-denied', function () {
     return view('access-denied');
 })->name('access-denied');
 
-// Main Chat Route - Redirects to a random employee if no recipient is provided
-Route::get('/chat', function () {
-    $user = Auth::user();
-
-    if ($user->role == 'customer') {
-        $employees = User::where('role', 'employee')->get();
-        if ($employees->isEmpty()) {
-            abort(404, 'No employees found');
-        }
-        $randomEmployee = $employees->random();
-        return redirect()->route('chat.recipient', ['recipient' => $randomEmployee->user_id]);
-    }
-
-    $customers = User::whereHas('messages', function ($query) use ($user) {
-        $query->where('user_id', $user->user_id);
-    })->get();
-
-    return view('employeeui.assistcustomer', ['conversations' => $customers]);
-})->middleware('auth')->name('chat');
-
-// Route for specific recipient conversation
+// Chat Routes
+Route::get('/asksupport/{convoID}', [FAQController::class, 'askSupport'])->name('askSupport');
+Route::get('/chat/{convoID}', [ChatController::class, 'showChat'])->name('chat');
 Route::get('/chat/{recipient}', [AssistCustomerController::class, 'showChat'])->middleware('auth')->name('chat.recipient');
-
-// Send Message Route
 Route::post('/send-message', [ChatController::class, 'sendMessage'])->middleware('auth');
+Route::get('/messages/{conversationId}', [ChatController::class, 'getMessages']);
 
-Route::post('/qrcode', [CustomOrderController::class, 'generateQRCode'])->name('qrcode');
-Route::post('/generate-billing-statement', [CustomOrderController::class, 'generateBillingStatement']);
+// Testing routes
+Route::get('/triggerevent', [LogController::class, 'triggerEvent']);
+Route::get('/test-email', function () {
+    Mail::raw('This is a test email from Symfony Mailer in Laravel 9.', function ($message) {
+        $message->to('nyctuss@gmail.com')->subject('Test Email');
+    });
 
-// Define route to preview a specific order
-Route::get('/previeworder/{id}', [CustomOrderController::class, 'show'])->name('previeworder');
-
-
+    return 'Test email sent. Check your inbox.';
+});

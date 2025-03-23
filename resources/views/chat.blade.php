@@ -1,177 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ Auth::id() }}">
+    <meta name="conversation-id" content="{{ $convoID }}">
     <meta name="user-name" content="{{ Auth::user()->name }}">
+    <meta name="pusher-app-key" content="{{ env('PUSHER_APP_KEY') }}">
+    <meta name="pusher-cluster" content="{{ env('PUSHER_APP_CLUSTER') }}">
     @vite('resources/js/app.js')
+    @vite('resources/js/chat.js')
     @vite('resources/css/app.css')
 </head>
-<body class="bg-mainbackground bg-cover overflow-hidden">
-    <!-- Chat -->
-    <div class="ChatContainer bg-brownbgcolor h-screen bg-opacity-80 backdrop-blur-md flex flex-col">
 
-        <!-- ChatHeader -->
-        <h1 class="TopBar text-white text-center w-full bg-maroonbgcolor text-2xl py-2 relative">
-
-            <!-- Go back button -->
-            <a href="{{ Auth::check() ? (Auth::user()->isEmployee() ? route('employeeui.assistcustomer') : route('faq')) : '#' }}" class="GoBackButton absolute top-0.5 right-2 group">
-                <img class="BackButton h-8 w-8 rounded-lg p-1 translate-y-2" src="../img/gobackbutton.svg">
-            </a>
-
+<body class="bg-primary bg-cover overflow-hidden">
+    <div class="ChatContainer bg-secondary h-screen flex flex-col">
+        <h1 class="TopBar text-highlight text-center w-full bg-deep text-2xl py-3 relative animate__animated animate__fadeIn">
             @php
-            echo "You're talking with " . $recipient->name;
+            if (Auth::check()) {
+            if (Auth::user()->role == 'customer') {
+            $route = route('vieworder');
+            } elseif (Auth::user()->role == 'employee') {
+            $route = route('assistcustomer.index');
+            } else {
+            $route = route('home');
+            }
+            }
             @endphp
+
+            <x-backbutton :route="$route" />
+            <a href="{{ route('home') }}">
+                <div class="flex flex-col justify-center ml-0">
+                    <div class="weblogo1 text-lg font-bold text-highlight text-stroke-pink text-center">7 GUYS</div>
+                    <div class="weblogo2 text-sm font-bold text-primary">HOUSE OF FASHION</div>
+                </div>
+            </a>
         </h1>
 
         <!-- ChatBody -->
         <div id="chat-container" class="flex flex-col h-screen overflow-y-auto">
-            <ul id="messages" class="flex-1 overflow-y-auto flex flex-col p-4">
-                <!-- Messages will be loaded here dynamically -->
+            <ul id="messages" class="flex-1 overflow-y-auto flex flex-col p-4 space-y-4">
+                <!-- Messages loaded dynamically -->
+                @foreach ($messages as $message)
+                <li class="flex {{ $message->user_id === Auth::id() ? 'text-right ml-auto' : 'text-left mr-auto' }} animate__animated animate__fadeIn animate__delay-1s">
+                    <div class="flex items-start">
+                        <div class="text-white">
+                            <strong>{{ $message->user->name }} ({{ $message->messDate }})</strong><br>
+
+                            <!-- Check if the message content is a valid image URL -->
+                            @if (filter_var($message->messContent, FILTER_VALIDATE_URL) && strpos($message->messContent, '/storage/orders/qrcodes/') !== false)
+                            <!-- Render image if the content is a valid URL pointing to the QR code -->
+                            <img src="{{ asset($message->messContent) }}" alt="QR Code" class="max-w-xs mx-auto mt-2">
+                            @else
+                            <!-- Render regular text messages -->
+                            <span class="bg-accent text-white p-2 rounded-lg inline-block">{{ $message->messContent }}</span>
+                            @endif
+                        </div>
+                    </div>
+                </li>
+                @endforeach
             </ul>
-            
-            <div class="p-4 flex items-center">
+
+            <!-- Message input form -->
+            <div class="p-4 flex items-center bg-accent">
                 <form id="message-form" class="flex-grow">
-                    <input type="text" id="message-input" class="w-full rounded-lg" placeholder="Type your message">
+                    <input type="text" id="message-input" class="w-full rounded-lg px-4 py-2 text-primary focus:outline-none focus:ring-2 focus:ring-highlight" placeholder="Type your message" autocomplete="off">
                 </form>
-
-                <!-- Button for employees only -->
-                @if(Auth::check() && Auth::user()->isEmployee())
-                    <button id="employeeActionButton" class="bg-maroonbgcolor text-white rounded-lg px-4 py-2 ml-2 hover:bg-white hover:text-maroonbgcolor transition duration-300 ease-in-out">
-                        Terminate Session
-                    </button>
-                @endif
+                <!-- @if(Auth::check() && Auth::user()->isEmployee())
+                <button id="employeeActionButton" class="bg-danger text-white rounded-lg px-4 py-2 ml-2 hover:bg-white hover:text-danger transition duration-300 ease-in-out transform hover:scale-105">
+                    Terminate Session
+                </button>
+                @endif -->
             </div>
-            
         </div>
-        
-    <script>
-        window.currentUserId = {{ Auth::user()->user_id }};
 
-// chat js
-document.addEventListener('DOMContentLoaded', function () {
-    const messageForm = document.getElementById('message-form');
-    const messageInput = document.getElementById('message-input');
-    const messageList = document.getElementById('messages');
-    const currentUserId = window.currentUserId;
-
-    // Function to load message history from sessionStorage
-    function loadMessageHistory() {
-        const messageHistory = JSON.parse(sessionStorage.getItem('messageHistory')) || [];
-        messageHistory.forEach(message => {
-            const messageElement = document.createElement('li');
-            messageElement.className = 'mb-2 flex';
-            const isSender = message.senderId === currentUserId;
-            messageElement.innerHTML = `
-                <div class="${isSender ? 'ml-auto text-right' : 'mr-auto text-left'}">
-                    <strong class="text-white">${message.user} (${message.date})</strong><br>
-                    <span class="bg-maroonbgcolor text-white p-2 rounded-lg inline-block w-auto h-auto">${message.content}</span>
-                </div>
-            `;
-            messageList.appendChild(messageElement);
-        });
-        // Scroll to the bottom to show the latest message
-        messageList.scrollTop = messageList.scrollHeight;
-    }
-
-    // Load message history on page load
-    loadMessageHistory();
-
-    // Listen for real-time messages
-    window.Echo.private('chat')
-    .listen('MessageSent', (e) => {
-        const messageContent = e.message || 'No Content';
-        const messageDate = normalizeDate(e.date) || 'Unknown Date'; // Normalize the date
-        const senderId = e.senderId || null;
-
-        // Create a new message element
-        const messageElement = document.createElement('li');
-        messageElement.className = 'mb-2 flex';
-        
-        const isSender = senderId === currentUserId;
-        messageElement.innerHTML = `
-            <div class="${isSender ? 'ml-auto text-right' : 'mr-auto text-left'}">
-                <strong class="text-white">${e.user} (${messageDate})</strong><br>
-                <span class="bg-maroonbgcolor text-white p-2 rounded-lg inline-block w-auto h-auto">${messageContent}</span>
-            </div>
-        `;
-        
-        // Append the new message at the bottom
-        messageList.appendChild(messageElement);
-
-        // Scroll to the bottom to show the latest message
-        messageList.scrollTop = messageList.scrollHeight;
-
-        // Save the message to sessionStorage
-        saveMessageToHistory(e.user, messageContent, messageDate, senderId);
-    });
-
-    messageForm.addEventListener('submit', function (e) {
-        e.preventDefault(); // Prevent the default form submission
-
-        const message = messageInput.value;
-
-        fetch('/send-message', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                message: message
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`HTTP error! Status: ${response.status}. Response: ${text}`);
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Message sent:', data); // Debug output
-            messageInput.value = ''; // Clear the input after sending
-            
-            // Save the sent message to sessionStorage
-            saveMessageToHistory(data.user, message, normalizeDate(data.date), data.senderId);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-
-    // Function to save message to sessionStorage
-    function saveMessageToHistory(user, content, date, senderId) {
-        const messageHistory = JSON.parse(sessionStorage.getItem('messageHistory')) || [];
-        
-        // Check if the message is already saved
-        const isDuplicate = messageHistory.some(msg => 
-            msg.content === content && 
-            msg.senderId === senderId
-        );
-
-        // Save to sessionStorage only if it's not a duplicate
-        if (!isDuplicate) {
-            messageHistory.push({ user, content, date, senderId });
-            sessionStorage.setItem('messageHistory', JSON.stringify(messageHistory));
-        } else {
-            console.log('Duplicate message not saved:', { user, content, date, senderId });
-        }
-    }
-
-    // Function to normalize date format
-    function normalizeDate(dateString) {
-        // Parse the date string and convert it to a standard format
-        const date = new Date(dateString);
-        return date.toISOString().slice(0, 19).replace('T', ' '); // e.g., '2024-09-25 11:34:56'
-    }
-});
-
-// localStorage.removeItem('messageHistory');
-
-    </script>
 
     </div>
 </body>
+
 </html>

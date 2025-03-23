@@ -11,8 +11,11 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "livewire/livewire": "^2.12",
+        "nesbot/carbon": "^2.72",
         "pusher/pusher-php-server": "^7.2",
-        "simplesoftwareio/simple-qrcode": "^4.2"
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "symfony/mailer": "^6.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

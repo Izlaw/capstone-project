@@ -16,7 +16,7 @@ class LoginController extends Controller
      */
     public function index(): View
     {
-        return view ('auth.login');
+        return view('auth.login');
     }
 
     /**
@@ -37,7 +37,7 @@ class LoginController extends Controller
 
         // Attempt to log the user in
         if (Auth::attempt($credentials)) {
-            $user = Auth::user(); 
+            $user = Auth::user();
 
             // Check if user is an Admin or Employee and redirect accordingly
             if ($user->role === 'admin') {

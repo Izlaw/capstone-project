@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -8,15 +9,21 @@
     @vite('resources/css/app.css')
     @vite('resources/js/app.js')
     @include('layouts.header')
+    @livewireStyles
+
 </head>
+
 <body class="font-sans antialiased">
     <div class="min-h-screen ">
-          <!-- Include your header here -->
+        <!-- Include your header here -->
 
         <!-- Page Content -->
         <main>
             @yield('content')
         </main>
     </div>
+    @livewireScripts
+
 </body>
+
 </html>
